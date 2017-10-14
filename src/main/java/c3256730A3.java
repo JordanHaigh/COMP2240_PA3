@@ -11,12 +11,11 @@ public class c3256730A3 implements ISubscriber
     public static void main(String[]args)
     {
         c3256730A3 intFace = new c3256730A3();
-        intFace.run(args);
+        try { intFace.run(args); } catch (IOException e) { e.printStackTrace(); }
     }
 
 
-    private void run(String[]args)
-    {
+    private void run(String[]args) throws IOException {
         if(args.length == 0)
         {
             throw new IllegalArgumentException("Error. Missing program arguments");
@@ -27,13 +26,15 @@ public class c3256730A3 implements ISubscriber
         for(String filePath: args)
         {
             //Read each process file
-            Process process = null;
-            try { process = readProcess(filePath); } catch (IOException e) { e.printStackTrace(); }
+            Process process = readProcess(filePath);
+
             processList.add(process);
         }
 
         //Start processing
+        CPU cpu = new CPU(processList);
 
+        cpu.cycle();
 
     }
     private Process readProcess(String filePath) throws IOException {
@@ -76,7 +77,9 @@ public class c3256730A3 implements ISubscriber
     {
         String processName = filePath.replaceAll(".txt","")
                                     .replaceAll(".dat","")
-                                    .replaceAll("process","");
+                                    .replaceAll("process","")
+                                    .replaceAll("Process","");
+
         int processId = Integer.parseInt(processName);
 
         //Cleanse line to remove \n, \t characters and make the any glyphs toUpperCase
@@ -99,11 +102,12 @@ public class c3256730A3 implements ISubscriber
 
     private String cleanseProcessData(String fileContents)
     {
-        String cleansed = fileContents.replaceAll("\r\n", " ") // \r\n is windows version of new line
-                .replaceAll("\n", " ")
-                .replaceAll("\t", " ")
-                .replaceAll("begin", "")
-                .replaceAll("end", "");
+        String cleansed = fileContents.replaceAll("begin\n", "")
+                                    .replaceAll("end\n", "")
+                                    .replaceAll("\r\n", " ") // \r\n is windows version of new line
+                                    .replaceAll("\n", " ")
+                                    .replaceAll("\t", " ");
+
 
 
         while (cleansed.contains("  "))

@@ -1,7 +1,7 @@
 public class Page
 {
     private int id;
-    private Instruction instruction;
+    private static Instruction instruction = new Instruction();
     private int currentTime = 0;
 
     public Page(int id)
