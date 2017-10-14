@@ -7,8 +7,11 @@ public class Process
     private static final int MAX_PAGES = 50;
     private String id;
 
-     private int startTime;
+    private int startTime;
     private int finishTime;
+
+    private int remainingServiceTime;
+
     private ProcessState processState;
 
 
@@ -17,6 +20,7 @@ public class Process
     {
         this.id = id;
         this.pageList = pageList;
+        remainingServiceTime = pageList.size();
 
         startTime = 0;
         processState = ProcessState.NEW;
@@ -26,6 +30,7 @@ public class Process
     public boolean isNew() { return processState.equals(ProcessState.NEW); }
     public boolean isReady() { return processState.equals(ProcessState.READY); }
     public boolean isRunning() { return processState.equals(ProcessState.RUNNING); }
+    public boolean isFinishedCycling() {return remainingServiceTime == 0;}
 
     public void admit(int currentTime)
     {
@@ -83,6 +88,19 @@ public class Process
     }
 
     /**
+     * public void run()
+     * Subtracts 1 from the remaining service time only if the process is running
+     */
+    public void run()
+    {
+        if(isRunning())
+            remainingServiceTime--;
+        else
+            runTimeExceptionMessage(ProcessState.RUNNING);
+
+    }
+
+    /**
      * private void runtimeExceptionMessage(ProcessState requiredState)
      * Throws Runtime Exception Message
      * @param requiredState - State the process is meant to be in
@@ -92,6 +110,9 @@ public class Process
         throw new RuntimeException("Process is not in the " + requiredState + "state for correct transition. Actual State: " + processState);
     }
 
+    public int getRemainingServiceTime() {
+        return remainingServiceTime;
+    }
 }
 
 

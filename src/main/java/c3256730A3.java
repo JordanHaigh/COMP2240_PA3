@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class c3256730A3
+public class c3256730A3 implements ISubscriber
 {
+    private int currentTime = 0;
+
     public static void main(String[]args)
     {
         c3256730A3 intFace = new c3256730A3();
@@ -109,5 +111,12 @@ public class c3256730A3
     }
 
 
+    @Override
+    public void handleMessage(ObservableMessage message) {
+        if(message instanceof ObservableCPUTimeMessage)
+        {
+            currentTime = ((ObservableCPUTimeMessage) message).getCpuTimeTick();
 
+        }
+    }
 }
