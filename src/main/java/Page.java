@@ -2,7 +2,7 @@ public class Page
 {
     private int id;
     private Instruction instruction;
-    private static int currentTime = 0;
+    private int currentTime = 0;
 
     public Page(int id)
     {

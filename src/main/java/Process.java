@@ -5,17 +5,15 @@ public class Process
 {
     private List<Page> pageList = new ArrayList<>();
     private static final int MAX_PAGES = 50;
-    private int id;
+    private String id;
 
-    private int currentTime = 0;
-
-    private int startTime;
+     private int startTime;
     private int finishTime;
     private ProcessState processState;
 
 
 
-    public Process(int id, List<Page> pageList)
+    public Process(String id, List<Page> pageList)
     {
         this.id = id;
         this.pageList = pageList;
@@ -24,7 +22,7 @@ public class Process
         processState = ProcessState.NEW;
     }
 
-    public int getId() { return id; }
+    public String getId() { return id; }
     public boolean isNew() { return processState.equals(ProcessState.NEW); }
     public boolean isReady() { return processState.equals(ProcessState.READY); }
     public boolean isRunning() { return processState.equals(ProcessState.RUNNING); }
