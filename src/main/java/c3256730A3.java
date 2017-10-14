@@ -75,7 +75,9 @@ public class c3256730A3 implements ISubscriber
     private Process readProcessDataFromString(String fileContents, String filePath)
     {
         String processName = filePath.replaceAll(".txt","")
-                                    .replaceAll(".dat","");
+                                    .replaceAll(".dat","")
+                                    .replaceAll("process","");
+        int processId = Integer.parseInt(processName);
 
         //Cleanse line to remove \n, \t characters and make the any glyphs toUpperCase
         String cleansedData = cleanseProcessData(fileContents);
@@ -90,7 +92,7 @@ public class c3256730A3 implements ISubscriber
             pageList.add(new Page(pageId));
         }
 
-        Process process = new Process(processName, pageList);
+        Process process = new Process(processId, pageList);
 
         return process;
     }
