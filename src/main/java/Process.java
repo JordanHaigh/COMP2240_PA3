@@ -11,7 +11,6 @@ public class Process
     private int finishTime;
 
     private int remainingServiceTime;
-
     private ProcessState processState;
 
 
@@ -24,6 +23,9 @@ public class Process
 
         startTime = 0;
         processState = ProcessState.NEW;
+
+        for(Page page: pageList)
+            page.linkProcessToPage(this);
     }
 
     public int getId() { return id; }
@@ -112,6 +114,16 @@ public class Process
 
     public int getRemainingServiceTime() {
         return remainingServiceTime;
+    }
+
+    public int getCurrentNumberPagesRunning()
+    {
+        int count = 0;
+        for(Page page: pageList)
+            if(page.isLoadedInMemory())
+                count++;
+
+        return count;
     }
 }
 

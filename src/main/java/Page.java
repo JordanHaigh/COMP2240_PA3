@@ -1,23 +1,45 @@
 public class Page
 {
-    private int id;
+    private int pageNumber;
     private static Instruction instruction = new Instruction();
-    private int currentTime = 0;
 
-    public Page(int id)
+    private Process process;
+    private boolean loadedInMemory;
+    private int timeLastUsed;
+
+
+    public Page(int pageNumber)
     {
-        this.id = id;
+        this.pageNumber = pageNumber;
     }
 
-
-
-    public void updateCurrentTime()
+    public void linkProcessToPage(Process process)
     {
-        currentTime += instruction.INSTRUCTION_TIME;
-         //Observer pattern, update CPU time and possible Main time
+        this.process = process;
     }
 
+    public Process getProcess() {return process; }
 
+    public boolean isLoadedInMemory() {return loadedInMemory;}
 
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("P")
+                .append(process.getId())
+                .append("(")
+                .append(pageNumber)
+                .append(")");
 
+        return sb.toString();
+    }
+
+    public int getTimeLastUsed() {
+        return timeLastUsed;
+    }
+
+    public void setTimeLastUsed(int timeLastUsed) {
+        this.timeLastUsed = timeLastUsed;
+    }
 }
