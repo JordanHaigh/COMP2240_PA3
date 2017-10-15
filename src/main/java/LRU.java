@@ -43,7 +43,6 @@ public class LRU implements IPageReplacementAlgorithm
         {
             //Find the next empty index in the frames
             return memory.findNextEmptyIndex(); //Will never return -1 due to the if condition
-            //todo issue page fault, update current time it entered, etc.
         }
 
         //////////SCENARIO 3 - NO EMPTY SPACES, NOT IN MEMORY///////////////
