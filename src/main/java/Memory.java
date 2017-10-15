@@ -15,11 +15,13 @@ public class Memory
     public Memory(int numberOfProcesses)
     {
         this.numberOfProcesses = numberOfProcesses;
-        getFixedAllocationNumber(numberOfProcesses);
+        calculateFixedAllocationNumber(numberOfProcesses);
         size = 0;
     }
 
     public int size() {return size;}
+    public Page[] getFrames(){return frames; }
+
 
     public boolean framesIsFull() {return size == MAX_FRAMES; }
     public boolean framesIsEmpty() {return size == 0; }
@@ -34,10 +36,11 @@ public class Memory
         return false;
     }
 
-    public void getFixedAllocationNumber(int numberOfProcesses)
+    public void calculateFixedAllocationNumber(int numberOfProcesses)
     {
         fixedAllocationNumber = (int)MAX_FRAMES/numberOfProcesses;
     }
+    public int getFixedAllocationNumber(){return fixedAllocationNumber; }
 
     public boolean isFrameOccupied(int index)  { return frames[index] != null; }
 
@@ -64,6 +67,17 @@ public class Memory
             //do not allow adding to memory
         }
 
+    }
+
+    public int findNextEmptyIndex()
+    {
+        for(int i = 0; i < MAX_FRAMES; i++)
+        {
+            if(frames[i] == null)
+                return i;
+        }
+
+        return -1;
     }
 
     private boolean processHasReachedMaxAllocation(Process process)

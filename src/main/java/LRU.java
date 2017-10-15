@@ -41,12 +41,20 @@ public class LRU implements IPageReplacementAlgorithm
                 leastRecentlyUsedPage = frame;
         }
 
+        //Cater for the scenario that frames are empty
+        if(loadedPages.size() < memory.getFixedAllocationNumber())
+        {
+            //Find the next empty index in the frames
+            return memory.findNextEmptyIndex(); //Will never return -1 since we have already checked for empty spots
+        }
+
         return leastRecentlyUsedPage.getIndex();
         //todo implement page least recent used time
     }
 
     @Override
-    public void replacePage(Page pageToInsert, int replacementIndex) {
-
+    public void replacePage(Page pageToInsert, int replacementIndex)
+    {
+        memory.getFrames()[replacementIndex] = pageToInsert;
     }
 }
