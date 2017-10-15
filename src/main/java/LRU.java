@@ -25,31 +25,27 @@ public class LRU implements IPageReplacementAlgorithm
         //Need to find out what pages are currently loaded
         //Look through the memory module and pick out pages that belong to the process
         //Add that to a separate list, making note of their indexes (for replacement)
-        List<Frame> loadedPages = populateLoadedPages(parentProcess);
+        List<Frame> loadedProcessPages = populateLoadedPages(parentProcess);
 
         //Need to find the least recently used page in that is loaded in the memory module
         //page needs to know the last time it was used
 
-        Frame leastRecentlyUsedPage = loadedPages.get(0); //Initialise first
+
+        Frame leastRecentlyUsedPage = loadedProcessPages.get(0); //Initialise first
 
         //look through the list of pages loaded in memory and keep track of what their last time used is
         //then determine what the lowest time value is of all pages - this will be the page to be replaced.
 
-        for(Frame frame: loadedPages)
+        for(Frame frame: loadedProcessPages)
         {
             if(frame.getPage().getTimeLastUsed() < leastRecentlyUsedPage.getPage().getTimeLastUsed())
                 leastRecentlyUsedPage = frame;
         }
 
-        //Cater for the scenario that frames are empty
-        if(loadedPages.size() < memory.getFixedAllocationNumber())
-        {
-            //Find the next empty index in the frames
-            return memory.findNextEmptyIndex(); //Will never return -1 since we have already checked for empty spots
-        }
 
         return leastRecentlyUsedPage.getIndex();
         //todo implement page least recent used time
+
     }
 
     @Override

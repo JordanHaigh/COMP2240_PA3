@@ -6,6 +6,7 @@ public class Memory
     private static final int MAX_FRAMES = 30;
     private int numberOfProcesses;
     private int fixedAllocationNumber;
+    private IPageReplacementAlgorithm pageReplacementAlgorithm;
 
     private int size;
 
@@ -56,17 +57,49 @@ public class Memory
         return pagesBelongingToParentProcess;
     }
 
-    public void addToMemory(Page page)
+    public void addToMemory(Page pageToInsert)
     {
-        if(!processHasReachedMaxAllocation(page.getProcess()))
+        boolean needToRunPageReplacement = true;
+
+        List<Frame> loadedProcessPages = findAllPagesInMemory(pageToInsert.getProcess());
+
+        ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
+
+        //Cater for scenario where page may already be running
+        for(Frame frame: loadedProcessPages)
         {
-            //Allow it to add to memory
-        }
-        else
-        {
-            //do not allow adding to memory
+            //We already know they have the same parent process
+            // Find out if they both have the same page number
+            if(frame.getPage().getPageNumber() == pageToInsert.getPageNumber())
+            {
+                //This page number is already running in memory
+                //Then we don't need to replace this page and issue a page fault
+                needToRunPageReplacement = false;
+            }
         }
 
+        //////////////SCENARIO 2 - EMPTY FRAMES FOR PAGE ENTRY/////////////////////
+
+        //Cater for the scenario that frames are empty
+        if(loadedProcessPages.size() < getFixedAllocationNumber())
+        {
+            //Find the next empty index in the frames
+            needToRunPageReplacement = false;
+            int replacementIndex = findNextEmptyIndex(); //Will never return -1 since we have already checked for empty spots
+            frames[replacementIndex] = pageToInsert;
+
+            //In case of clock replacement
+            frames[replacementIndex].setUseBit(true);
+            //todo issue page fault, update current time it entered, etc.
+
+        }
+        //////////////////SCENARIO 3 - NEED TO USE THE PAGE REPLACEMENT ALGORITHM////////////////////
+        if(needToRunPageReplacement)
+        {
+            pageReplacementAlgorithm.replacePage(pageToInsert, pageReplacementAlgorithm.getReplacementIndex(pageToInsert));
+            //Issue page fault
+            //todo need to implement page faulting when replacing an index
+        }
     }
 
     public int findNextEmptyIndex()

@@ -5,7 +5,9 @@ public class Page
 
     private Process process;
     private boolean loadedInMemory;
+
     private int timeLastUsed;
+    private boolean useBit;
 
 
     public Page(int pageNumber)
@@ -19,6 +21,8 @@ public class Page
     }
 
     public Process getProcess() {return process; }
+
+    public int getPageNumber() {return pageNumber; }
 
     public boolean isLoadedInMemory() {return loadedInMemory;}
 
@@ -41,5 +45,13 @@ public class Page
 
     public void setTimeLastUsed(int timeLastUsed) {
         this.timeLastUsed = timeLastUsed;
+    }
+
+    public boolean useBitIsTrue() {
+        return useBit;
+    }
+
+    public void setUseBit(boolean useBit) {
+        this.useBit = useBit;
     }
 }
