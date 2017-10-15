@@ -20,7 +20,7 @@ public class Page
         this.process = process;
     }
 
-    public Process getProcess() {return process; }
+    public Process getParentProcess() {return process; }
 
     public int getPageNumber() {return pageNumber; }
 

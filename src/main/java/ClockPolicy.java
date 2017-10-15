@@ -1,3 +1,5 @@
+import com.sun.org.apache.xpath.internal.FoundIndex;
+
 import java.util.List;
 
 public class ClockPolicy implements IPageReplacementAlgorithm
@@ -7,70 +9,75 @@ public class ClockPolicy implements IPageReplacementAlgorithm
 
     public ClockPolicy(Memory memory) {this.memory = memory; }
 
+    private int currentClockIndex = 0;
+
 
     @Override
     public int getReplacementIndex(Page pageToInsert)
     {
-        //need to find out who the page to insert belongs to
-        Process parentProcess = pageToInsert.getProcess();
-        //Need to find out all pages that belong to this process are running in memory at the moment
-        List<Frame> loadedProcessPages = memory.findAllPagesInMemory(parentProcess);
+        Page[] frames = memory.getFrames();
+        Process parentProcess = pageToInsert.getParentProcess();
 
-        int replacementIndex = -1;
 
-        //Need to determine what index holds the oldest page
-        int indexForOldestPage = -1;
-        int oldestPageTime = Integer.MAX_VALUE;
-        //todo maybe double check how this code works when there are no pages running on memory - whether the index will be -1 or something
+        ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
 
-        //Find the oldest time and its index
-        for(Frame frame : loadedProcessPages)
-            if(frame.getPage().getTimeLastUsed() < oldestPageTime)
-            {
-                indexForOldestPage = loadedProcessPages.indexOf(frame);
-                oldestPageTime = frame.getPage().getTimeLastUsed();
-            }
-
-        boolean foundReplacementIndex = false;
-
-        for(int i = indexForOldestPage; i < loadedProcessPages.size(); i++)
+        //Cater for scenario where page may already be running
+        for(int i = 0; i < memory.getFramesSize(); i++)
         {
-            if(loadedProcessPages.get(i).getPage().useBitIsTrue())
-               loadedProcessPages.get(i).getPage().setUseBit(false);
-            else
+            //Check if they have the same parent process. Find out if they both have the same page number
+            if(frames[i].getPageNumber() == pageToInsert.getPageNumber() && frames[i].getParentProcess() == parentProcess)
             {
-                //Found a bit that is set to false
-                //This will be the index to be replaced
-                foundReplacementIndex = true;
-                replacementIndex =  loadedProcessPages.get(i).getIndex();
+                // If page is already in memory, set the use bit to 1 and return. You do not need to replace this page
+                frames[i].setUseBit(true);
+
+                // return -1 to signal that a page replacement is not required
+                return -1;
             }
         }
 
-        //If we were unable to find a replacement index, restart for loop till we find the next replacement
-        if(!foundReplacementIndex)
+        ///////////SCENARIO 2 - EMPTY FRAME FOR PAGE ENTRY/////////////////////
+        if(parentProcess.getCurrentNumberPagesRunning() < memory.getFixedAllocationNumber())
         {
-            for(int i = 0; i < loadedProcessPages.size(); i++)
+            //Find the next empty index in the frames
+            int foundEmptyIndex = memory.findNextEmptyIndex(); //Will never return -1 due to the if condition
+
+            // if there is no page at this index, we can insert the page here (and move the clock head forward after)
+            moveClockIndex();
+            return foundEmptyIndex;
+            //todo check if code breaks here if foundEmptyIndex == -1
+            //todo issue page fault, update current time it entered, etc.
+        }
+
+        //////////SCENARIO 3 - NO EMPTY SPACES, NOT IN MEMORY///////////////
+        int foundIndex = -1;
+
+        while(foundIndex == -1)
+        {
+            for(int i = currentClockIndex; i < memory.getFramesSize(); i++)
             {
-                if(loadedProcessPages.get(i).getPage().useBitIsTrue())
-                    loadedProcessPages.get(i).getPage().setUseBit(false);
+                // Starting at the currentClockIndex, check if the page's use bit is set to 0
+                if(!frames[i].useBitIsTrue() && frames[i].getParentProcess() == parentProcess)
+                    // if it is 0, we replace it at this index (and move clock head movement after)
+                    foundIndex = i;
                 else
                 {
-                    //Found a bit that is set to false
-                    //This will be the index to be replaced
-                    replacementIndex =  loadedProcessPages.get(i).getIndex();
+                    // if it is 1, we set it to 0 and move the clock head forward
+                    frames[i].setUseBit(false);
+                    moveClockIndex();
                 }
             }
         }
 
-        return replacementIndex;
+        return foundIndex;
     }
 
-    @Override
-    public void replacePage(Page pageToInsert, int replacementIndex)
+    private void moveClockIndex()
     {
-        memory.getFrames()[replacementIndex] = pageToInsert;
-        pageToInsert.setUseBit(true);
-        //todo page fault
+        if(currentClockIndex == memory.getFramesSize())
+            this.currentClockIndex = 0;
+        else
+            this.currentClockIndex++;
     }
+
 
 }

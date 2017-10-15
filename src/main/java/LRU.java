@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class LRU implements IPageReplacementAlgorithm
@@ -10,26 +9,46 @@ public class LRU implements IPageReplacementAlgorithm
         this.memory = memory;
     }
 
-
-    private List<Frame> populateLoadedPages(Process process)
-    {
-        return memory.findAllPagesInMemory(process);
-    }
-
     @Override
     public int getReplacementIndex(Page pageToInsert)
     {
         //Need to find out who the page belongs to
-        Process parentProcess = pageToInsert.getProcess();
+        Process parentProcess = pageToInsert.getParentProcess();
 
         //Need to find out what pages are currently loaded
         //Look through the memory module and pick out pages that belong to the process
         //Add that to a separate list, making note of their indexes (for replacement)
-        List<Frame> loadedProcessPages = populateLoadedPages(parentProcess);
+        List<Frame> loadedProcessPages = memory.findAllPagesInMemory(parentProcess);
 
+
+        ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
+
+        //Cater for scenario where page may already be running
+        for(Frame frame: loadedProcessPages)
+        {
+            //We already know they have the same parent process
+            // Find out if they both have the same page number
+            if(frame.getPage().getPageNumber() == pageToInsert.getPageNumber())
+            {
+                //This page number is already running in memory
+                //Then we don't need to replace this page and issue a page fault
+                return -1; //Sentinel value to determine if we replace or not
+            }
+        }
+
+        //////////////SCENARIO 2 - EMPTY FRAMES FOR PAGE ENTRY/////////////////////
+
+        //Cater for the scenario that frames are empty
+        if(loadedProcessPages.size() < memory.getFixedAllocationNumber())
+        {
+            //Find the next empty index in the frames
+            return memory.findNextEmptyIndex(); //Will never return -1 due to the if condition
+            //todo issue page fault, update current time it entered, etc.
+        }
+
+        //////////SCENARIO 3 - NO EMPTY SPACES, NOT IN MEMORY///////////////
         //Need to find the least recently used page in that is loaded in the memory module
         //page needs to know the last time it was used
-
 
         Frame leastRecentlyUsedPage = loadedProcessPages.get(0); //Initialise first
 
@@ -45,12 +64,5 @@ public class LRU implements IPageReplacementAlgorithm
 
         return leastRecentlyUsedPage.getIndex();
         //todo implement page least recent used time
-
-    }
-
-    @Override
-    public void replacePage(Page pageToInsert, int replacementIndex)
-    {
-        memory.getFrames()[replacementIndex] = pageToInsert;
     }
 }

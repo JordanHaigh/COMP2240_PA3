@@ -20,12 +20,27 @@ public class Memory
         size = 0;
     }
 
-    public int size() {return size;}
-    public Page[] getFrames(){return frames; }
+    private void calculateFixedAllocationNumber(int numberOfProcesses) { fixedAllocationNumber = (int)MAX_FRAMES/numberOfProcesses; }
 
+    public int getFixedAllocationNumber(){return fixedAllocationNumber; }
 
-    public boolean framesIsFull() {return size == MAX_FRAMES; }
-    public boolean framesIsEmpty() {return size == 0; }
+    public boolean isFrameOccupied(int index)  { return frames[index] != null; }
+
+    private boolean processHasReachedMaxAllocation(Process process) { return process.getCurrentNumberPagesRunning() == fixedAllocationNumber; }
+
+    public Page[] getFrames(){ return frames; }
+
+    public int getFramesSize()
+    {
+        int count = 0;
+
+        for(int i = 0; i < MAX_FRAMES; i++)
+        {
+            if(frames[i] != null)
+                count++;
+        }
+        return count;
+    }
 
     public boolean isPageRunning(Page page)
     {
@@ -37,69 +52,16 @@ public class Memory
         return false;
     }
 
-    public void calculateFixedAllocationNumber(int numberOfProcesses)
-    {
-        fixedAllocationNumber = (int)MAX_FRAMES/numberOfProcesses;
-    }
-    public int getFixedAllocationNumber(){return fixedAllocationNumber; }
-
-    public boolean isFrameOccupied(int index)  { return frames[index] != null; }
-
     public List<Frame> findAllPagesInMemory(Process parentProcess)
     {
         List<Frame> pagesBelongingToParentProcess = new ArrayList<>();
         for(int i = 0; i < MAX_FRAMES; i++)
         {
-            if(frames[i].getProcess() == parentProcess)
+            if(frames[i] != null && frames[i].getParentProcess() == parentProcess)
                 pagesBelongingToParentProcess.add(new Frame(frames[i], i));
 
         }
         return pagesBelongingToParentProcess;
-    }
-
-    public void addToMemory(Page pageToInsert)
-    {
-        boolean needToRunPageReplacement = true;
-
-        List<Frame> loadedProcessPages = findAllPagesInMemory(pageToInsert.getProcess());
-
-        ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
-
-        //Cater for scenario where page may already be running
-        for(Frame frame: loadedProcessPages)
-        {
-            //We already know they have the same parent process
-            // Find out if they both have the same page number
-            if(frame.getPage().getPageNumber() == pageToInsert.getPageNumber())
-            {
-                //This page number is already running in memory
-                //Then we don't need to replace this page and issue a page fault
-                needToRunPageReplacement = false;
-            }
-        }
-
-        //////////////SCENARIO 2 - EMPTY FRAMES FOR PAGE ENTRY/////////////////////
-
-        //Cater for the scenario that frames are empty
-        if(loadedProcessPages.size() < getFixedAllocationNumber())
-        {
-            //Find the next empty index in the frames
-            needToRunPageReplacement = false;
-            int replacementIndex = findNextEmptyIndex(); //Will never return -1 since we have already checked for empty spots
-            frames[replacementIndex] = pageToInsert;
-
-            //In case of clock replacement
-            frames[replacementIndex].setUseBit(true);
-            //todo issue page fault, update current time it entered, etc.
-
-        }
-        //////////////////SCENARIO 3 - NEED TO USE THE PAGE REPLACEMENT ALGORITHM////////////////////
-        if(needToRunPageReplacement)
-        {
-            pageReplacementAlgorithm.replacePage(pageToInsert, pageReplacementAlgorithm.getReplacementIndex(pageToInsert));
-            //Issue page fault
-            //todo need to implement page faulting when replacing an index
-        }
     }
 
     public int findNextEmptyIndex()
@@ -113,11 +75,29 @@ public class Memory
         return -1;
     }
 
-    private boolean processHasReachedMaxAllocation(Process process)
+    public void addToMemory(Page pageToInsert)
     {
-        return process.getCurrentNumberPagesRunning() == fixedAllocationNumber;
+        int index = pageReplacementAlgorithm.getReplacementIndex(pageToInsert);
+        if(isFrameOccupied(index))
+            unloadPageAtIndex(index);
+
+        loadPageAtIndex(pageToInsert, index);
     }
 
+    private void unloadPageAtIndex(int index)
+    {
+        if(index < 0 || index > MAX_FRAMES)
+            throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
+        frames[index] = null;
+    }
 
+    private void loadPageAtIndex(Page page, int index)
+    {
+        if(index < 0 || index > MAX_FRAMES)
+            throw new IllegalArgumentException("Index used to unload page is out of bounds");
+
+        frames[index] = page;
+        //todo page fault, increment time etc
+    }
 }
