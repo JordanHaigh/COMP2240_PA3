@@ -25,6 +25,7 @@ public class Page
     public int getPageNumber() {return pageNumber; }
 
     public boolean isLoadedInMemory() {return loadedInMemory;}
+    public void setLoadedInMemory(boolean value) {loadedInMemory = value; }
 
     @Override
     public String toString()

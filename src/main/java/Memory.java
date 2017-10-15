@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Memory
 {
-    private static final int MAX_FRAMES = 30;
+    private static final int MAX_FRAMES = 3; //todo change back to 30
     private int numberOfProcesses;
     private int fixedAllocationNumber;
     private IPageReplacementAlgorithm pageReplacementAlgorithm;
@@ -20,6 +20,7 @@ public class Memory
         size = 0;
     }
 
+
     private void calculateFixedAllocationNumber(int numberOfProcesses) { fixedAllocationNumber = (int)MAX_FRAMES/numberOfProcesses; }
 
     public int getFixedAllocationNumber(){return fixedAllocationNumber; }
@@ -28,9 +29,13 @@ public class Memory
 
     private boolean processHasReachedMaxAllocation(Process process) { return process.getCurrentNumberPagesRunning() == fixedAllocationNumber; }
 
+    public void setPageReplacementAlgorithm(IPageReplacementAlgorithm pageReplacementAlgorithm) { this.pageReplacementAlgorithm = pageReplacementAlgorithm; }
+
+    public int getMaxFrames() {return MAX_FRAMES; }
+
     public Page[] getFrames(){ return frames; }
 
-    public int getFramesSize()
+    public int getCountOfAllPagesRunning()
     {
         int count = 0;
 
@@ -78,10 +83,14 @@ public class Memory
     public void addToMemory(Page pageToInsert)
     {
         int index = pageReplacementAlgorithm.getReplacementIndex(pageToInsert);
-        if(isFrameOccupied(index))
-            unloadPageAtIndex(index);
+        if(index != -1)
+        {
+            if(isFrameOccupied(index))
+                unloadPageAtIndex(index);
 
-        loadPageAtIndex(pageToInsert, index);
+            loadPageAtIndex(pageToInsert, index);
+        }
+
     }
 
     private void unloadPageAtIndex(int index)
@@ -89,7 +98,9 @@ public class Memory
         if(index < 0 || index > MAX_FRAMES)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
+        frames[index].setLoadedInMemory(false);
         frames[index] = null;
+        size--;
     }
 
     private void loadPageAtIndex(Page page, int index)
@@ -97,7 +108,11 @@ public class Memory
         if(index < 0 || index > MAX_FRAMES)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
+        page.setLoadedInMemory(true);
+        page.setUseBit(true);
         frames[index] = page;
-        //todo page fault, increment time etc
+        size++;
     }
+
+
 }

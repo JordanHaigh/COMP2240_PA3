@@ -1,7 +1,3 @@
-import com.sun.org.apache.xpath.internal.FoundIndex;
-
-import java.util.List;
-
 public class ClockPolicy implements IPageReplacementAlgorithm
 {
     private Memory memory;
@@ -20,9 +16,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
 
 
         ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
-
-        //Cater for scenario where page may already be running
-        for(int i = 0; i < memory.getFramesSize(); i++)
+        for(int i = 0; i < memory.getCountOfAllPagesRunning(); i++)
         {
             //Check if they have the same parent process. Find out if they both have the same page number
             if(frames[i].getPageNumber() == pageToInsert.getPageNumber() && frames[i].getParentProcess() == parentProcess)
@@ -45,7 +39,6 @@ public class ClockPolicy implements IPageReplacementAlgorithm
             moveClockIndex();
             return foundEmptyIndex;
             //todo check if code breaks here if foundEmptyIndex == -1
-            //todo issue page fault, update current time it entered, etc.
         }
 
         //////////SCENARIO 3 - NO EMPTY SPACES, NOT IN MEMORY///////////////
@@ -53,17 +46,24 @@ public class ClockPolicy implements IPageReplacementAlgorithm
 
         while(foundIndex == -1)
         {
-            for(int i = currentClockIndex; i < memory.getFramesSize(); i++)
+            for(int i = currentClockIndex; i < memory.getCountOfAllPagesRunning(); i++)
             {
                 // Starting at the currentClockIndex, check if the page's use bit is set to 0
-                if(!frames[i].useBitIsTrue() && frames[i].getParentProcess() == parentProcess)
-                    // if it is 0, we replace it at this index (and move clock head movement after)
-                    foundIndex = i;
-                else
+                if(frames[i].getParentProcess() == parentProcess)
                 {
-                    // if it is 1, we set it to 0 and move the clock head forward
-                    frames[i].setUseBit(false);
-                    moveClockIndex();
+                    if(frames[i].useBitIsTrue())
+                    {
+                        // if it is 1, we set it to 0 and move the clock head forward
+                        frames[i].setUseBit(false);
+                        moveClockIndex();
+                    }
+                    else
+                    {
+                        // if it is 0, we replace it at this index (and move clock head movement after)
+                        foundIndex = i;
+                        moveClockIndex();
+                        break;
+                    }
                 }
             }
         }
@@ -73,7 +73,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
 
     private void moveClockIndex()
     {
-        if(currentClockIndex == memory.getFramesSize())
+        if(currentClockIndex == memory.getMaxFrames()-1)
             this.currentClockIndex = 0;
         else
             this.currentClockIndex++;
