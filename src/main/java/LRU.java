@@ -22,7 +22,6 @@ public class LRU implements IPageReplacementAlgorithm
 
 
         ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
-
         //Cater for scenario where page may already be running
         for(Frame frame: loadedProcessPages)
         {
@@ -45,7 +44,8 @@ public class LRU implements IPageReplacementAlgorithm
             return memory.findNextEmptyIndex(); //Will never return -1 due to the if condition
         }
 
-        //////////SCENARIO 3 - NO EMPTY SPACES, NOT IN MEMORY///////////////
+        ////////////SCENARIO 3 - NO EMPTY SPACES, NOT IN MEMORY///////////////
+
         //Need to find the least recently used page in that is loaded in the memory module
         //page needs to know the last time it was used
 

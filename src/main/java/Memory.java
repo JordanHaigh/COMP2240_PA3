@@ -93,6 +93,20 @@ public class Memory
 
     }
 
+    public void addToMemory(Page pageToInsert, int currentTime)
+    {
+        int index = pageReplacementAlgorithm.getReplacementIndex(pageToInsert);
+        if(index != -1)
+        {
+            if(isFrameOccupied(index))
+                unloadPageAtIndex(index);
+
+            loadPageAtIndex(pageToInsert, index);
+            pageToInsert.setTimeLastUsed(currentTime);
+        }
+
+    }
+
     private void unloadPageAtIndex(int index)
     {
         if(index < 0 || index > MAX_FRAMES)
@@ -103,7 +117,7 @@ public class Memory
         size--;
     }
 
-    private void loadPageAtIndex(Page page, int index)
+    private void loadPageAtIndex(Page page, int index) //todo wrooooooooong
     {
         if(index < 0 || index > MAX_FRAMES)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");

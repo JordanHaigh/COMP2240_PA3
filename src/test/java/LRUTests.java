@@ -27,10 +27,11 @@ public class LRUTests {
         IPageReplacementAlgorithm clock = new LRU(memory);
         memory.setPageReplacementAlgorithm(clock);
 
-
+        int i = 0;
         for(Page page: pageList)
         {
-            memory.addToMemory(page);
+            memory.addToMemory(page, i);
+            i++;
         }
 
         Assert.assertEquals(3, memory.getFrames()[0].getPageNumber());
