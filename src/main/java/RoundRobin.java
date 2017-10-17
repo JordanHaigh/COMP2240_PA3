@@ -75,8 +75,8 @@ public class RoundRobin implements ISchedulingAlgorithm
      */
     @Override
     public int timeRequiredToRunNextProcess(Process process) {
-        if(process.getRemainingServiceTime() < 3)
-            return process.getRemainingServiceTime();
+        if(process.getRemainingNumberOfPages() < 3)
+            return process.getRemainingNumberOfPages();
         else
             return 3;
     }

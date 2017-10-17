@@ -80,44 +80,31 @@ public class Memory
         return -1;
     }
 
-    public void addToMemory(Page pageToInsert)
-    {
-        int index = pageReplacementAlgorithm.getReplacementIndex(pageToInsert);
-        if(index != -1)
-        {
-            if(isFrameOccupied(index))
-                unloadPageAtIndex(index);
-
-            loadPageAtIndex(pageToInsert, index);
-        }
-
-    }
-
     public void addToMemory(Page pageToInsert, int currentTime)
     {
         int index = pageReplacementAlgorithm.getReplacementIndex(pageToInsert);
         if(index != -1)
         {
             if(isFrameOccupied(index))
-                unloadPageAtIndex(index);
+                unloadPageAtIndex(index, currentTime);
 
-            loadPageAtIndex(pageToInsert, index);
-            pageToInsert.setTimeLastUsed(currentTime);
+            loadPageAtIndex(pageToInsert, index, currentTime);
         }
 
     }
 
-    private void unloadPageAtIndex(int index)
+    private void unloadPageAtIndex(int index, int currentTime)
     {
         if(index < 0 || index > MAX_FRAMES)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
+        frames[index].setFinishTime(currentTime);
         frames[index].setLoadedInMemory(false);
         frames[index] = null;
         size--;
     }
 
-    private void loadPageAtIndex(Page page, int index) //todo wrooooooooong
+    private void loadPageAtIndex(Page page, int index, int currentTime)
     {
         if(index < 0 || index > MAX_FRAMES)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
@@ -125,6 +112,7 @@ public class Memory
         page.setLoadedInMemory(true);
         page.setUseBit(true);
         frames[index] = page;
+        frames[index].setStartTime(currentTime);
         size++;
     }
 

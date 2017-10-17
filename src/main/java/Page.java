@@ -9,6 +9,10 @@ public class Page
     private int timeLastUsed;
     private boolean useBit;
 
+    private int startTime;
+    private int finishTime;
+
+
 
     public Page(int pageNumber)
     {
@@ -26,6 +30,11 @@ public class Page
 
     public boolean isLoadedInMemory() {return loadedInMemory;}
     public void setLoadedInMemory(boolean value) {loadedInMemory = value; }
+
+    public int getStartTime() {return startTime; }
+    public void setStartTime(int startTime) {this.startTime = startTime;}
+    public int getFinishTime(){return finishTime; }
+    public void setFinishTime(int finishTime){this.finishTime = finishTime; }
 
     @Override
     public String toString()

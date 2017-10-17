@@ -31,8 +31,30 @@ public class c3256730A3 implements ISubscriber
             processList.add(process);
         }
 
+
         //Start processing
+        Memory memory = new Memory(processList.size());
+        IPageReplacementAlgorithm lru = new LRU(memory);
+        IPageReplacementAlgorithm clockPolicy = new ClockPolicy(memory);
+        List<IPageReplacementAlgorithm> pageReplacementAlgorithms = new ArrayList<>();
+        pageReplacementAlgorithms.add(lru);
+        pageReplacementAlgorithms.add(clockPolicy);
+
+        for(IPageReplacementAlgorithm pageReplacementAlgorithm: pageReplacementAlgorithms)
+        {
+            memory.setPageReplacementAlgorithm(pageReplacementAlgorithm);
+            CPU cpu = new CPU(processList, memory);
+            //While each process still has pages in its page list, keep going
+            boolean keepGoing = true;
+            while(cpu.hasQueuedProcesses())
+            {
+                cpu.cycle();
+            }
+        }
+
+        //todo for each loop with two different cpus running two different page replacement algorithms
         CPU cpu = new CPU(processList);
+
 
         cpu.cycle();
 

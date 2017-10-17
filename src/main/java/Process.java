@@ -4,13 +4,14 @@ import java.util.List;
 public class Process
 {
     private List<Page> pageList = new ArrayList<>();
+    private List<Page> completedPageList = new ArrayList<>();
     private static final int MAX_PAGES = 50;
     private int id;
 
     private int startTime;
     private int finishTime;
 
-    private int remainingServiceTime;
+    private int remainingNumberOfPages;
     private ProcessState processState;
 
 
@@ -19,7 +20,7 @@ public class Process
     {
         this.id = id;
         this.pageList = pageList;
-        remainingServiceTime = pageList.size();
+        remainingNumberOfPages = pageList.size();
 
         startTime = 0;
         processState = ProcessState.NEW;
@@ -32,7 +33,12 @@ public class Process
     public boolean isNew() { return processState.equals(ProcessState.NEW); }
     public boolean isReady() { return processState.equals(ProcessState.READY); }
     public boolean isRunning() { return processState.equals(ProcessState.RUNNING); }
-    public boolean isFinishedCycling() {return remainingServiceTime == 0;}
+    public boolean isFinishedCycling() {return remainingNumberOfPages == 0;}
+    public Page getNextPageFromList() {return pageList.get(0);}
+    public int getStartTime() {return startTime; }
+    public void setStartTime(int startTime) {this.startTime = startTime;}
+    public int getFinishTime(){return finishTime; }
+    public void setFinishTime(int finishTime){this.finishTime = finishTime; }
 
     public void admit(int currentTime)
     {
@@ -91,12 +97,16 @@ public class Process
 
     /**
      * public void run()
-     * Subtracts 1 from the remaining service time only if the process is running
      */
     public void run()
     {
         if(isRunning())
-            remainingServiceTime--;
+        {
+            remainingNumberOfPages--;
+            Page nextPageInList = pageList.remove(0);
+            completedPageList.add(nextPageInList);
+
+        }
         else
             runTimeExceptionMessage(ProcessState.RUNNING);
 
@@ -112,8 +122,8 @@ public class Process
         throw new RuntimeException("Process is not in the " + requiredState + "state for correct transition. Actual State: " + processState);
     }
 
-    public int getRemainingServiceTime() {
-        return remainingServiceTime;
+    public int getRemainingNumberOfPages() {
+        return remainingNumberOfPages;
     }
 
     public int getCurrentNumberPagesRunning()

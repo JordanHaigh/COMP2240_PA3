@@ -12,15 +12,19 @@ public class CPU implements IObservable
     private List<Process> completedProcessList = new ArrayList<>();
     private Process currentProcess;
 
-    public CPU(List<Process> processList)
+    private Memory memory;
+
+    public CPU(List<Process> processList, Memory memory)
     {
         this.processList = processList;
+        this.memory = memory;
         currentTime = 0;
     }
 
     public int getCurrentTime() {
         return currentTime;
     }
+    public boolean hasQueuedProcesses() {return processList.size() > 0; }
 
     /**
      * public void performProcessing(Process process, int numberOfCycles)
@@ -37,11 +41,13 @@ public class CPU implements IObservable
 
         for(int i = 0; i < numberOfCycles; i++)
         {
+            Page nextPageFromProcess = process.getNextPageFromList();
+            memory.addToMemory(nextPageFromProcess);
             process.run();
             updateTimeTick(1);
         }
 
-        if(process.getRemainingServiceTime() == 0)
+        if(process.getRemainingNumberOfPages() == 0)
         {
             processList.remove(process);
             completedProcessList.add(process);
@@ -74,13 +80,13 @@ public class CPU implements IObservable
 
         if(process != null)
             schedulingAlgorithm.runProcess(process, this);
-        /*else
+        else
         {
             //No processes to run. Currently idling
-            updateTimeTick(1);
-            // System.out.println("Forced time increment. Current time now: " + currentTime);
+            //updateTimeTick(1);
+             System.out.println("No processes to run: " + currentTime);
 
-        }*/
+        }
     }
 
     @Override
