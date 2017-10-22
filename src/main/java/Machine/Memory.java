@@ -10,33 +10,43 @@ import java.util.List;
 
 public class Memory implements ISubscriber
 {
-    private static final int MAX_FRAMES = 30;
+    private int maxFrames;
     private int fixedAllocationNumber;
     private IPageReplacementAlgorithm pageReplacementAlgorithm;
 
     private int size;
 
-    private Page[] frames = new Page[MAX_FRAMES];
+    private Page[] frames;
 
 
     public Memory(int numberOfProcesses)
     {
+        maxFrames = 30;
         calculateFixedAllocationNumber(numberOfProcesses);
         size = 0;
+        frames = new Page[maxFrames];
+    }
+
+    public Memory(int numberProcesses, int maxFrames)
+    {
+        this.maxFrames = maxFrames;
+        calculateFixedAllocationNumber(numberProcesses);
+        size = 0;
+        frames = new Page[maxFrames];
     }
 
 
-    private void calculateFixedAllocationNumber(int numberOfProcesses) { fixedAllocationNumber = (int)MAX_FRAMES/numberOfProcesses; }
+    private void calculateFixedAllocationNumber(int numberOfProcesses) { fixedAllocationNumber = (int)maxFrames/numberOfProcesses; }
 
     public int getFixedAllocationNumber(){return fixedAllocationNumber; }
 
     public boolean isFrameOccupied(int index)  { return frames[index] != null; }
 
-    private boolean processHasReachedMaxAllocation(SchedulingProcess process) { return process.getCurrentNumberPagesRunning() == fixedAllocationNumber; }
+    public  boolean processHasReachedMaxAllocation(SchedulingProcess process) { return process.countDistinctProcessesRunning() >= fixedAllocationNumber; }
 
     public void setPageReplacementAlgorithm(IPageReplacementAlgorithm pageReplacementAlgorithm) { this.pageReplacementAlgorithm = pageReplacementAlgorithm; }
 
-    public int getMaxFrames() {return MAX_FRAMES; }
+    public int getMaxFrames() {return maxFrames; }
 
     public Page[] getFrames(){ return frames; }
 
@@ -52,7 +62,7 @@ public class Memory implements ISubscriber
     {
         int count = 0;
 
-        for(int i = 0; i < MAX_FRAMES; i++)
+        for(int i = 0; i < maxFrames; i++)
         {
             if(frames[i] != null)
                 count++;
@@ -73,7 +83,7 @@ public class Memory implements ISubscriber
     public List<Frame> findAllPagesInMemory(SchedulingProcess parentProcess)
     {
         List<Frame> pagesBelongingToParentProcess = new ArrayList<>();
-        for(int i = 0; i < MAX_FRAMES; i++)
+        for(int i = 0; i < maxFrames; i++)
         {
             if(frames[i] != null && frames[i].getParentProcess() == parentProcess)
                 pagesBelongingToParentProcess.add(new Frame(frames[i], i));
@@ -84,7 +94,7 @@ public class Memory implements ISubscriber
 
     public int findNextEmptyIndex()
     {
-        for(int i = 0; i < MAX_FRAMES; i++)
+        for(int i = 0; i < maxFrames; i++)
         {
             if(frames[i] == null)
                 return i;
@@ -108,7 +118,7 @@ public class Memory implements ISubscriber
 
     private void unloadPageAtIndex(int index, int currentTime)
     {
-        if(index < 0 || index > MAX_FRAMES)
+        if(index < 0 || index > maxFrames)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
         frames[index].setLoadedInMemory(false);
@@ -118,7 +128,7 @@ public class Memory implements ISubscriber
 
     private void loadPageAtIndex(Page page, int index, int currentTime)
     {
-        if(index < 0 || index > MAX_FRAMES)
+        if(index < 0 || index > maxFrames)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
         page.setLoadedInMemory(true);

@@ -26,7 +26,7 @@ public class LRUTests {
         for(Page page: pageList)
             page.linkProcessToPage(schedulingProcess);
 
-        Memory memory = new Memory(1);
+        Memory memory = new Memory(1,3);
         IPageReplacementAlgorithm clock = new LRU(memory);
         memory.setPageReplacementAlgorithm(clock);
 

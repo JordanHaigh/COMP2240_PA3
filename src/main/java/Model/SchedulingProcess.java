@@ -156,7 +156,7 @@ public class SchedulingProcess
         throw new RuntimeException("Model.SchedulingProcess is not in the " + requiredState + "state for correct transition. Actual State: " + processState);
     }
 
-    public int getCurrentNumberPagesRunning()
+   /* public int getCurrentNumberPagesRunning()
     {
         int count = 0;
         for(Page page: pageList)
@@ -164,7 +164,17 @@ public class SchedulingProcess
                 count++;
 
         return count;
+    }*/
+
+
+    //https://www.leveluplunch.com/java/examples/count-boolean-true-values-in-arraylist/
+    //NOTE: This section is using Lambdas, you will need to use Java 1.8 for this submission
+    public long countDistinctProcessesRunning()
+    {
+        return pageList.stream().distinct().filter(p -> p.isLoadedInMemory() == true).count();
+        //Calculates the distinct pages that are running in memory
     }
+
 }
 
 
