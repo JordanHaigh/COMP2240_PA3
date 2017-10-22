@@ -34,11 +34,29 @@ public class Process
     public boolean isReady() { return processState.equals(ProcessState.READY); }
     public boolean isRunning() { return processState.equals(ProcessState.RUNNING); }
     public boolean isFinishedCycling() {return remainingNumberOfPages == 0;}
-    public Page getNextPageFromList() {return pageList.get(0);}
     public int getStartTime() {return startTime; }
     public void setStartTime(int startTime) {this.startTime = startTime;}
     public int getFinishTime(){return finishTime; }
     public void setFinishTime(int finishTime){this.finishTime = finishTime; }
+
+    public boolean isBlocked() { return processState.equals(ProcessState.BLOCKED); }
+
+    public void block(int currentTime)
+    {
+        //todo do i need to cater for blocked times or whatnot
+
+        if (isRunning())
+            processState = ProcessState.BLOCKED;
+        else
+            runTimeExceptionMessage(ProcessState.BLOCKED);
+    }
+
+    public void unblock(int currentTime) {
+        if(isBlocked())
+            processState = ProcessState.READY;
+        else
+            runTimeExceptionMessage(ProcessState.READY);
+    }
 
     public void admit(int currentTime)
     {
@@ -95,21 +113,20 @@ public class Process
         }
     }
 
+
+    private int nextPageIndex = 0;
+
+    public Page getNextPageFromList() {return pageList.get(nextPageIndex++);}
+    public boolean hasReachedEndOfPageList() { return remainingNumberOfPages() == 0; }
+
+    public int remainingNumberOfPages() {return  pageList.size() - nextPageIndex; }
+
+
     /**
      * public void run()
      */
     public void run()
     {
-        if(isRunning())
-        {
-            remainingNumberOfPages--;
-            Page nextPageInList = pageList.remove(0);
-            completedPageList.add(nextPageInList);
-
-        }
-        else
-            runTimeExceptionMessage(ProcessState.RUNNING);
-
     }
 
     /**
@@ -120,10 +137,6 @@ public class Process
     private void runTimeExceptionMessage(ProcessState requiredState)
     {
         throw new RuntimeException("Process is not in the " + requiredState + "state for correct transition. Actual State: " + processState);
-    }
-
-    public int getRemainingNumberOfPages() {
-        return remainingNumberOfPages;
     }
 
     public int getCurrentNumberPagesRunning()

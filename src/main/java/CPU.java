@@ -42,12 +42,16 @@ public class CPU implements IObservable
         for(int i = 0; i < numberOfCycles; i++)
         {
             Page nextPageFromProcess = process.getNextPageFromList();
-            memory.addToMemory(nextPageFromProcess);
-            process.run();
-            updateTimeTick(1);
+
+            if (!nextPageFromProcess.isLoadedInMemory())
+                issuePageFault();
+            else {
+                process.run();
+                updateTimeTick(Instruction.INSTRUCTION_TIME);
+            }
         }
 
-        if(process.getRemainingNumberOfPages() == 0)
+        if(process.hasReachedEndOfPageList())
         {
             processList.remove(process);
             completedProcessList.add(process);
@@ -76,10 +80,14 @@ public class CPU implements IObservable
 
     public void cycle()
     {
-        Process process = schedulingAlgorithm.nextProcessToRun(processList);
+        Process nextProcessToRun = schedulingAlgorithm.nextProcessToRun(processList);
 
-        if(process != null)
-            schedulingAlgorithm.runProcess(process, this);
+        if(nextProcessToRun != null)
+            schedulingAlgorithm.runProcess(nextProcessToRun, this);
+        else if (nextProcessToRun.isBlocked()) {
+            //process is waiting for pages to be loaded into memory.
+            //Cycle for RR cycles and see if it ends up being loaded during this time quantum
+        }
         else
         {
             //No processes to run. Currently idling

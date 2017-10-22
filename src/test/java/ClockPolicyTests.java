@@ -27,7 +27,7 @@ public class ClockPolicyTests
 
         for(Page page: pageList)
         {
-            memory.addToMemory(page);
+            memory.addToMemory(page,1);
         }
 
         Assert.assertEquals(3, memory.getFrames()[0].getPageNumber());

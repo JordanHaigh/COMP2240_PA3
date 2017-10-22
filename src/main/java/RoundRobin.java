@@ -12,8 +12,6 @@ import java.util.List;
  */
 public class RoundRobin implements ISchedulingAlgorithm
 {
-    private Process previousProcess;
-    //StringBuilder sb = new StringBuilder("PRR:\n");
 
 
     /**
@@ -30,23 +28,10 @@ public class RoundRobin implements ISchedulingAlgorithm
         if(process.isNew())
             process.admit(cpu.getCurrentTime());
 
-        if(process != previousProcess)
-        {
-            //cpu.runDispatcher();
-            /*sb.append("T")
-                    .append(cpu.getCurrentTime())
-                    .append(": ")
-                    .append(process.getId())
-                    .append("(")
-                    .append(process.getPriority())
-                    .append(")")
-                    .append("\n");*/
-        }
-
         process.dispatch(cpu.getCurrentTime());
 
         cpu.performProcessing(process,timeRequiredToRunNextProcess(process));
-        previousProcess = process;
+
         if(!process.isFinishedCycling())
             process.interrupt(cpu.getCurrentTime());
         else

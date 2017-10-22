@@ -34,6 +34,7 @@ public class c3256730A3 implements ISubscriber
 
         //Start processing
         Memory memory = new Memory(processList.size());
+
         IPageReplacementAlgorithm lru = new LRU(memory);
         IPageReplacementAlgorithm clockPolicy = new ClockPolicy(memory);
         List<IPageReplacementAlgorithm> pageReplacementAlgorithms = new ArrayList<>();
@@ -42,21 +43,20 @@ public class c3256730A3 implements ISubscriber
 
         for(IPageReplacementAlgorithm pageReplacementAlgorithm: pageReplacementAlgorithms)
         {
+            //todo clear memory
+            //todo reset process list
+            //todo reset pages
+
             memory.setPageReplacementAlgorithm(pageReplacementAlgorithm);
             CPU cpu = new CPU(processList, memory);
+
             //While each process still has pages in its page list, keep going
-            boolean keepGoing = true;
             while(cpu.hasQueuedProcesses())
             {
                 cpu.cycle();
             }
         }
 
-        //todo for each loop with two different cpus running two different page replacement algorithms
-        CPU cpu = new CPU(processList);
-
-
-        cpu.cycle();
 
     }
     private Process readProcess(String filePath) throws IOException {

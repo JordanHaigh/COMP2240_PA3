@@ -80,10 +80,14 @@ public class Memory
         return -1;
     }
 
+
+
+
+
     public void addToMemory(Page pageToInsert, int currentTime)
     {
         int index = pageReplacementAlgorithm.getReplacementIndex(pageToInsert);
-        if(index != -1)
+        if(index != -1) // if not already in memory
         {
             if(isFrameOccupied(index))
                 unloadPageAtIndex(index, currentTime);
