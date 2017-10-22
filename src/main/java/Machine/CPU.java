@@ -1,3 +1,12 @@
+package Machine;
+
+import Algorithms.ISchedulingAlgorithm;
+import Algorithms.RoundRobin;
+import Model.Instruction;
+import Model.Page;
+import Model.SchedulingProcess;
+import ObserverPattern.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +17,14 @@ public class CPU implements IObservable
 
     private List<ISubscriber> subscriberList = new ArrayList<>();
 
-    private List<Process> processList = new ArrayList<>();
-    private List<Process> completedProcessList = new ArrayList<>();
-    private Process currentProcess;
+    private List<SchedulingProcess> processList = new ArrayList<>();
+    private List<SchedulingProcess> completedProcessList = new ArrayList<>();
+    private SchedulingProcess currentProcess;
 
     private Memory memory;
     private IOController ioController;
 
-    public CPU(List<Process> processList, Memory memory)
+    public CPU(List<SchedulingProcess> processList, Memory memory)
     {
         this.processList = processList;
         this.memory = memory;
@@ -36,17 +45,17 @@ public class CPU implements IObservable
     public boolean hasQueuedProcesses() {return processList.size() > 0; }
 
     /**
-     * public void performProcessing(Process process, int numberOfCycles)
+     * public void performProcessing(Model.SchedulingProcess process, int numberOfCycles)
      * Run the process on the cpu for a specified period of time
-     * Once completed, it will be added to a 'Completed Process List' for data statistics
+     * Once completed, it will be added to a 'Completed Model.SchedulingProcess List' for data statistics
      * If the process does not complete processing within the allocated number of cycles, it is sent to the back
      * of the process list.
-     * @param process - Current process that will run on the CPU
+     * @param process - Current process that will run on the Machine.CPU
      * @param numberOfCycles - Length of time the process runs for
      */
-    public void performProcessing(Process process, int numberOfCycles)
+    public void performProcessing(SchedulingProcess process, int numberOfCycles)
     {
-        this.currentProcess = process; //Used in determining if CPU is running if we need to preempt
+        this.currentProcess = process; //Used in determining if Machine.CPU is running if we need to preempt
 
         for(int i = 0; i < numberOfCycles; i++)
         {
@@ -55,7 +64,7 @@ public class CPU implements IObservable
             if (!nextPageFromProcess.isLoadedInMemory())
                 issuePageFault(nextPageFromProcess);
             else {
-                process.run(); //todo this method doesnt do anything anymore
+                process.run(currentTime);
                 updateTimeTick(Instruction.INSTRUCTION_TIME);
             }
         }
@@ -89,7 +98,7 @@ public class CPU implements IObservable
 
     public void cycle()
     {
-        Process nextProcessToRun = schedulingAlgorithm.nextProcessToRun(processList);
+        SchedulingProcess nextProcessToRun = schedulingAlgorithm.nextProcessToRun(processList);
 
         if(nextProcessToRun != null)
             schedulingAlgorithm.runProcess(nextProcessToRun, this);

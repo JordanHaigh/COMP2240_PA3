@@ -1,17 +1,13 @@
+package Model;
+
 public class Page
 {
     private int pageNumber;
-    private static Instruction instruction = new Instruction(); //todo necessary???
-
-    private Process process;
+    private SchedulingProcess schedulingProcess;
     private boolean loadedInMemory;
 
     private int timeLastUsed;
     private boolean useBit;
-
-    private int startTime;
-    private int finishTime;
-
 
 
     public Page(int pageNumber)
@@ -24,29 +20,32 @@ public class Page
         this.pageNumber = page.getPageNumber();
     }
 
-    public void linkProcessToPage(Process process)
+
+    public void resetData()
     {
-        this.process = process;
+        loadedInMemory = false;
+        timeLastUsed = 0;
+        useBit = false;
     }
 
-    public Process getParentProcess() {return process; }
+    public void linkProcessToPage(SchedulingProcess schedulingProcess)
+    {
+        this.schedulingProcess = schedulingProcess;
+    }
+
+    public SchedulingProcess getParentProcess() {return schedulingProcess; }
 
     public int getPageNumber() {return pageNumber; }
 
     public boolean isLoadedInMemory() {return loadedInMemory;}
     public void setLoadedInMemory(boolean value) {loadedInMemory = value; }
 
-    public int getStartTime() {return startTime; }
-    public void setStartTime(int startTime) {this.startTime = startTime;}
-    public int getFinishTime(){return finishTime; }
-    public void setFinishTime(int finishTime){this.finishTime = finishTime; }
-
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
         sb.append("P")
-                .append(process.getId())
+                .append(schedulingProcess.getId())
                 .append("(")
                 .append(pageNumber)
                 .append(")");

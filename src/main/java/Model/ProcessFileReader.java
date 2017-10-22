@@ -1,3 +1,5 @@
+package Model;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,23 +9,23 @@ import java.util.List;
 public class ProcessFileReader
 {
     private PageGeneratorFactory factory = new PageGeneratorFactory();
-    private List<Process> processList = new ArrayList<>();
+    private List<SchedulingProcess> schedulingProcessList = new ArrayList<>();
 
-    public List<Process> run(String[]args) throws IOException {
+    public List<SchedulingProcess> run(String[]args) throws IOException {
         if(args.length == 0)
             throw new IllegalArgumentException("Error. Missing program arguments");
 
         for(String filePath: args)
         {
-            //Read each process file
-            Process process = readProcess(filePath);
-            processList.add(process);
+            //Read each schedulingProcess file
+            SchedulingProcess schedulingProcess = readProcess(filePath);
+            schedulingProcessList.add(schedulingProcess);
         }
 
-        return processList;
+        return schedulingProcessList;
     }
 
-    public Process readProcess(String filePath) throws IOException {
+    public SchedulingProcess readProcess(String filePath) throws IOException {
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath)))
         {
             String fileContents = readWholeFile(reader);
@@ -58,7 +60,7 @@ public class ProcessFileReader
     }
 
 
-    private Process readProcessDataFromString(String fileContents, String filePath)
+    private SchedulingProcess readProcessDataFromString(String fileContents, String filePath)
     {
         String processName = filePath.replaceAll(".txt","")
                 .replaceAll(".dat","")
@@ -84,7 +86,7 @@ public class ProcessFileReader
             pageList.add(newPage);
         }
 
-        return new Process(processId, pageList);
+        return new SchedulingProcess(processId, pageList);
     }
 
     private String cleanseProcessData(String fileContents)

@@ -1,3 +1,9 @@
+package Machine;
+
+import Algorithms.IPageReplacementAlgorithm;
+import Model.*;
+import ObserverPattern.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -5,7 +11,6 @@ import java.util.List;
 public class Memory implements ISubscriber
 {
     private static final int MAX_FRAMES = 30;
-    private int numberOfProcesses;
     private int fixedAllocationNumber;
     private IPageReplacementAlgorithm pageReplacementAlgorithm;
 
@@ -16,7 +21,6 @@ public class Memory implements ISubscriber
 
     public Memory(int numberOfProcesses)
     {
-        this.numberOfProcesses = numberOfProcesses;
         calculateFixedAllocationNumber(numberOfProcesses);
         size = 0;
     }
@@ -28,7 +32,7 @@ public class Memory implements ISubscriber
 
     public boolean isFrameOccupied(int index)  { return frames[index] != null; }
 
-    private boolean processHasReachedMaxAllocation(Process process) { return process.getCurrentNumberPagesRunning() == fixedAllocationNumber; }
+    private boolean processHasReachedMaxAllocation(SchedulingProcess process) { return process.getCurrentNumberPagesRunning() == fixedAllocationNumber; }
 
     public void setPageReplacementAlgorithm(IPageReplacementAlgorithm pageReplacementAlgorithm) { this.pageReplacementAlgorithm = pageReplacementAlgorithm; }
 
@@ -66,7 +70,7 @@ public class Memory implements ISubscriber
         return false;
     }
 
-    public List<Frame> findAllPagesInMemory(Process parentProcess)
+    public List<Frame> findAllPagesInMemory(SchedulingProcess parentProcess)
     {
         List<Frame> pagesBelongingToParentProcess = new ArrayList<>();
         for(int i = 0; i < MAX_FRAMES; i++)
@@ -90,19 +94,15 @@ public class Memory implements ISubscriber
     }
 
 
-
-
-
     public void addToMemory(Page pageToInsert, int currentTime)
     {
         int index = pageReplacementAlgorithm.getReplacementIndex(pageToInsert);
-        if(index != -1) // if not already in memory
-        {
-            if(isFrameOccupied(index))
-                unloadPageAtIndex(index, currentTime);
 
-            loadPageAtIndex(pageToInsert, index, currentTime);
-        }
+        if(isFrameOccupied(index))
+            unloadPageAtIndex(index, currentTime);
+
+        loadPageAtIndex(pageToInsert, index, currentTime);
+        pageToInsert.setTimeLastUsed(currentTime);
 
     }
 
@@ -111,7 +111,6 @@ public class Memory implements ISubscriber
         if(index < 0 || index > MAX_FRAMES)
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
-        frames[index].setFinishTime(currentTime);
         frames[index].setLoadedInMemory(false);
         frames[index] = null;
         size--;
@@ -125,7 +124,6 @@ public class Memory implements ISubscriber
         page.setLoadedInMemory(true);
         page.setUseBit(true);
         frames[index] = page;
-        frames[index].setStartTime(currentTime);
         size++;
     }
 

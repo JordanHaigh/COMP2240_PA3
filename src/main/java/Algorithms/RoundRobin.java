@@ -1,8 +1,13 @@
+package Algorithms;
+
+import Machine.CPU;
+import Model.SchedulingProcess;
+
 import java.util.List;
 /**
  * Student Number: 3256730 Jordan Haigh
  * COMP2240 A1
- * PriorityRoundRobin.java is one of the scheduling algorithms used for the CPU
+ * PriorityRoundRobin.java is one of the scheduling algorithms used for the Machine.CPU
  *  This is a variant of the standard Round Robin (RR) algorithm.
  * Processes are divided into two priority classes Higher Priority Class (HPC):  processes with priority 0, 1 or 2
  * and
@@ -15,14 +20,14 @@ public class RoundRobin implements ISchedulingAlgorithm
 
 
     /**
-     * public void runProcess(Process process, CPU cpu)
-     * Runs the dispatcher first to ready the process. Process is run for a period of time depending on the priority.
+     * public void runProcess(Model.SchedulingProcess process, Machine.CPU cpu)
+     * Runs the dispatcher first to ready the process. Model.SchedulingProcess is run for a period of time depending on the priority.
      * Stringbuilder appends the time the process starts relevant to the specification
-     * @param process - Process to run on the cpu
-     * @param cpu - CPU instance
+     * @param process - Model.SchedulingProcess to run on the cpu
+     * @param cpu - Machine.CPU instance
      */
     @Override
-    public void runProcess(Process process, CPU cpu) {
+    public void runProcess(SchedulingProcess process, CPU cpu) {
 
 
         if(process.isNew())
@@ -39,13 +44,13 @@ public class RoundRobin implements ISchedulingAlgorithm
     }
 
     /**
-     * public Process nextProcessToRun(List<Process> processList)
+     * public Model.SchedulingProcess nextProcessToRun(List<Model.SchedulingProcess> processList)
      * Decides which process is to run on the cpu next, selects the first element from the list
-     * @param processList - Process list containing all processes ready to be run on the cpu
-     * @return - Process to run next
+     * @param processList - Model.SchedulingProcess list containing all processes ready to be run on the cpu
+     * @return - Model.SchedulingProcess to run next
      */
     @Override
-    public Process nextProcessToRun(List<Process> processList) {
+    public SchedulingProcess nextProcessToRun(List<SchedulingProcess> processList) {
         if(processList.isEmpty())
             return null;
         else
@@ -53,13 +58,13 @@ public class RoundRobin implements ISchedulingAlgorithm
     }
 
     /**
-     * public int timeRequiredToRunNextProcess(Process process)
+     * public int timeRequiredToRunNextProcess(Model.SchedulingProcess process)
      * Determines the time required to run the next process
-     * @param process - Process that will run on the cpu
+     * @param process - Model.SchedulingProcess that will run on the cpu
      * @return - Integer determining time length
      */
     @Override
-    public int timeRequiredToRunNextProcess(Process process) {
+    public int timeRequiredToRunNextProcess(SchedulingProcess process) {
         if(process.getRemainingNumberOfPages() < 3)
             return process.getRemainingNumberOfPages();
         else

@@ -1,3 +1,7 @@
+package ObserverPattern;
+
+import Model.Page;
+
 public class ObservablePageReadyMessage extends ObservableMessage
 {
     private Page page;

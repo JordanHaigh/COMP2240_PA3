@@ -1,7 +1,9 @@
+package ObserverPattern;
+
 /**
  * Student Number: 3256730 Jordan Haigh
  * COMP2240 A3
- * ISubscriber.java implements the Observer Pattern Interface for subscribers
+ * ObserverPattern.ISubscriber.java implements the Observer Pattern Interface for subscribers
  */
 public interface ISubscriber
 {

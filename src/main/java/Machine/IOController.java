@@ -1,4 +1,7 @@
-import org.omg.IOP.IORHelper;
+package Machine;
+
+import ObserverPattern.*;
+import Model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +10,6 @@ public class IOController implements ISubscriber, IObservable
 {
     public static final int PAGE_SWAP = 6;
     private List<ISubscriber> subscriberList = new ArrayList<>();
-    private Memory memory;
     private List<IORequest> ioRequests = new ArrayList<>();
 
     public void handlePageFault(Page page, int currentTime)
@@ -77,7 +79,7 @@ public class IOController implements ISubscriber, IObservable
             int currentTime = ((ObservablePageFaultMessage) message).getCurrentTime();
             handlePageFault(page, currentTime);
         }
-        if(message instanceof  ObservableCPUTimeMessage)
+        if(message instanceof ObservableCPUTimeMessage)
         {
             int cpuTime = ((ObservableCPUTimeMessage) message).getCpuTimeTick();
             checkIOListForReadiedRequests(cpuTime);

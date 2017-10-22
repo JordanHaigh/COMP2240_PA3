@@ -1,7 +1,9 @@
+package Model;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Process
+public class SchedulingProcess
 {
     private List<Page> pageList = new ArrayList<>();
     private List<Page> completedPageList = new ArrayList<>();
@@ -16,7 +18,7 @@ public class Process
 
 
 
-    public Process(int id, List<Page> pageList)
+    public SchedulingProcess(int id, List<Page> pageList)
     {
         this.id = id;
         this.pageList = pageList;
@@ -29,10 +31,10 @@ public class Process
     }
 
     //Copy constructor
-    public Process(Process process)
+    public SchedulingProcess(SchedulingProcess schedulingProcess)
     {
-        this.id = process.getId();
-        this.pageList = process.getPageList();
+        this.id = schedulingProcess.getId();
+        this.pageList = schedulingProcess.getPageList();
         startTime = 0;
         processState = ProcessState.NEW;
 
@@ -76,7 +78,7 @@ public class Process
         {
             //Update state
             processState = ProcessState.READY;
-            //stateTransitionMessage(ProcessState.READY, currentTime);
+            //stateTransitionMessage(Model.ProcessState.READY, currentTime);
 
         }
         else
@@ -90,7 +92,7 @@ public class Process
         {
             //Update state
             processState = ProcessState.RUNNING;
-            //stateTransitionMessage(ProcessState.RUNNING, currentTime);
+            //stateTransitionMessage(Model.ProcessState.RUNNING, currentTime);
 
         }
         else
@@ -104,7 +106,7 @@ public class Process
         {
             //Update state
             processState = ProcessState.READY;
-            //stateTransitionMessage(ProcessState.READY, currentTime);
+            //stateTransitionMessage(Model.ProcessState.READY, currentTime);
 
         }
         else
@@ -117,7 +119,7 @@ public class Process
         {
             //Update State
             processState = ProcessState.TERMINATED;
-            //stateTransitionMessage(ProcessState.TERMINATED, currentTime);
+            //stateTransitionMessage(Model.ProcessState.TERMINATED, currentTime);
 
             //Update finishTime
             finishTime = currentTime;
@@ -127,7 +129,7 @@ public class Process
 
     private int nextPageIndex = 0;
 
-    public Page getNextPageFromList() {return pageList.get(nextPageIndex++);}
+    public Page getNextPageFromList() {return pageList.get(nextPageIndex);}
     public boolean hasReachedEndOfPageList() { return getRemainingNumberOfPages() == 0; }
 
     public int getRemainingNumberOfPages() {return  pageList.size() - nextPageIndex; }
@@ -136,18 +138,22 @@ public class Process
     /**
      * public void run()
      */
-    public void run()
+    public void run(int currentTime)
     {
+        Page nextPage = getNextPageFromList();
+        nextPage.setTimeLastUsed(currentTime);
+        nextPageIndex++;
+
     }
 
     /**
-     * private void runtimeExceptionMessage(ProcessState requiredState)
+     * private void runtimeExceptionMessage(Model.ProcessState requiredState)
      * Throws Runtime Exception Message
      * @param requiredState - State the process is meant to be in
      */
     private void runTimeExceptionMessage(ProcessState requiredState)
     {
-        throw new RuntimeException("Process is not in the " + requiredState + "state for correct transition. Actual State: " + processState);
+        throw new RuntimeException("Model.SchedulingProcess is not in the " + requiredState + "state for correct transition. Actual State: " + processState);
     }
 
     public int getCurrentNumberPagesRunning()

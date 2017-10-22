@@ -1,7 +1,9 @@
+package ObserverPattern;
+
 /**
  * Student Number: 3256730 Jordan Haigh
  * COMP2240 A3
- * ObservableCPUTimeMessage.java extends from the abstract ObservableMessage class
+ * ObserverPattern.ObservableCPUTimeMessage.java extends from the abstract ObserverPattern.ObservableMessage class
  * This class monitors the current time when updated by the cpu.
  * This is later fed back to c3256730.java, utilising the observer pattern
  */

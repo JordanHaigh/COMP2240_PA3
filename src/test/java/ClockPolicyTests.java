@@ -1,3 +1,8 @@
+import Algorithms.ClockPolicy;
+import Algorithms.IPageReplacementAlgorithm;
+import Machine.Memory;
+import Model.Page;
+import Model.SchedulingProcess;
 import org.junit.*;
 import java.util.*;
 
@@ -15,10 +20,10 @@ public class ClockPolicyTests
             pageList.add(page);
 
         }
-        Process process = new Process(1, pageList);
+        SchedulingProcess schedulingProcess = new SchedulingProcess(1, pageList);
 
         for(Page page: pageList)
-            page.linkProcessToPage(process);
+            page.linkProcessToPage(schedulingProcess);
 
         Memory memory = new Memory(1);
         IPageReplacementAlgorithm clock = new ClockPolicy(memory);

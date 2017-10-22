@@ -1,10 +1,13 @@
+import Algorithms.IPageReplacementAlgorithm;
+import Algorithms.LRU;
+import Machine.Memory;
+import Model.Page;
+import Model.SchedulingProcess;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class LRUTests {
     @Test
@@ -18,10 +21,10 @@ public class LRUTests {
             pageList.add(page);
 
         }
-        Process process = new Process(1, pageList);
+        SchedulingProcess schedulingProcess = new SchedulingProcess(1, pageList);
 
         for(Page page: pageList)
-            page.linkProcessToPage(process);
+            page.linkProcessToPage(schedulingProcess);
 
         Memory memory = new Memory(1);
         IPageReplacementAlgorithm clock = new LRU(memory);

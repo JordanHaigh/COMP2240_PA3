@@ -1,6 +1,8 @@
+package Model;
+
 public class Frame
 {
-    private Page page; //Page loaded in memory
+    private Page page; //Model.Page loaded in memory
     private int index; //index where page is in memory
 
     public Frame(Page page, int index)

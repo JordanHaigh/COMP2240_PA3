@@ -1,3 +1,9 @@
+package Algorithms;
+
+import Machine.Memory;
+import Model.Page;
+import Model.SchedulingProcess;
+
 public class ClockPolicy implements IPageReplacementAlgorithm
 {
     private Memory memory;
@@ -12,22 +18,24 @@ public class ClockPolicy implements IPageReplacementAlgorithm
     public int getReplacementIndex(Page pageToInsert)
     {
         Page[] frames = memory.getFrames();
-        Process parentProcess = pageToInsert.getParentProcess();
+        SchedulingProcess parentProcess = pageToInsert.getParentProcess();
 
 
         ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
-        for(int i = 0; i < memory.getCountOfAllPagesRunning(); i++)
-        {
-            //Check if they have the same parent process. Find out if they both have the same page number
-            if(frames[i].getPageNumber() == pageToInsert.getPageNumber() && frames[i].getParentProcess() == parentProcess)
-            {
-                // If page is already in memory, set the use bit to 1 and return. You do not need to replace this page
-                frames[i].setUseBit(true);
-
-                // return -1 to signal that a page replacement is not required
-                return -1;
-            }
-        }
+        //Scenario already catered for, as the AddToMemory method is called after it is confirmed the page is not in memory
+        //
+        //for(int i = 0; i < memory.getCountOfAllPagesRunning(); i++)
+        // {
+        //    //Check if they have the same parent process. Find out if they both have the same page number
+        //    if(frames[i].getPageNumber() == pageToInsert.getPageNumber() && frames[i].getParentProcess() == parentProcess)
+        //    {
+        //        // If page is already in memory, set the use bit to 1 and return. You do not need to replace this page
+        //       frames[i].setUseBit(true);
+        //
+        //        // return -1 to signal that a page replacement is not required
+        //        return -1;
+        //    }
+        //}
 
         ///////////SCENARIO 2 - EMPTY FRAME FOR PAGE ENTRY/////////////////////
         if(parentProcess.getCurrentNumberPagesRunning() < memory.getFixedAllocationNumber())
@@ -38,7 +46,6 @@ public class ClockPolicy implements IPageReplacementAlgorithm
             // if there is no page at this index, we can insert the page here (and move the clock head forward after)
             moveClockIndex();
             return foundEmptyIndex;
-            //todo check if code breaks here if foundEmptyIndex == -1
         }
 
         //////////SCENARIO 3 - NO EMPTY SPACES, NOT IN MEMORY///////////////

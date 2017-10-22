@@ -1,3 +1,8 @@
+package Algorithms;
+
+import Machine.Memory;
+import Model.*;
+
 import java.util.List;
 
 public class LRU implements IPageReplacementAlgorithm
@@ -13,7 +18,7 @@ public class LRU implements IPageReplacementAlgorithm
     public int getReplacementIndex(Page pageToInsert)
     {
         //Need to find out who the page belongs to
-        Process parentProcess = pageToInsert.getParentProcess();
+        SchedulingProcess parentProcess = pageToInsert.getParentProcess();
 
         //Need to find out what pages are currently loaded
         //Look through the memory module and pick out pages that belong to the process
@@ -21,19 +26,20 @@ public class LRU implements IPageReplacementAlgorithm
         List<Frame> loadedProcessPages = memory.findAllPagesInMemory(parentProcess);
 
 
-        ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
+        //////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
+        //Scenario already catered for, as the AddToMemory method is called after it is confirmed the page is not in memory
         //Cater for scenario where page may already be running
-        for(Frame frame: loadedProcessPages)
-        {
-            //We already know they have the same parent process
-            // Find out if they both have the same page number
-            if(frame.getPage().getPageNumber() == pageToInsert.getPageNumber())
-            {
-                //This page number is already running in memory
-                //Then we don't need to replace this page and issue a page fault
-                return -1; //Sentinel value to determine if we replace or not
-            }
-        }
+        //for(Model.Frame frame: loadedProcessPages)
+        //{
+        //    //We already know they have the same parent process
+        //    // Find out if they both have the same page number
+        //    if(frame.getPage().getPageNumber() == pageToInsert.getPageNumber())
+        //    {
+        //        //This page number is already running in memory
+        //        //Then we don't need to replace this page and issue a page fault
+        //        return -1; //Sentinel value to determine if we replace or not
+        //    }
+        //}
 
         //////////////SCENARIO 2 - EMPTY FRAMES FOR PAGE ENTRY/////////////////////
 
