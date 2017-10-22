@@ -13,12 +13,21 @@ public class CPU implements IObservable
     private Process currentProcess;
 
     private Memory memory;
+    private IOController ioController;
 
     public CPU(List<Process> processList, Memory memory)
     {
         this.processList = processList;
         this.memory = memory;
+
         currentTime = 0;
+
+        ioController = new IOController();
+        addSubscriber(ioController);
+
+
+        ioController.addSubscriber(memory);
+
     }
 
     public int getCurrentTime() {
@@ -44,9 +53,9 @@ public class CPU implements IObservable
             Page nextPageFromProcess = process.getNextPageFromList();
 
             if (!nextPageFromProcess.isLoadedInMemory())
-                issuePageFault();
+                issuePageFault(nextPageFromProcess);
             else {
-                process.run();
+                process.run(); //todo this method doesnt do anything anymore
                 updateTimeTick(Instruction.INSTRUCTION_TIME);
             }
         }
@@ -95,6 +104,12 @@ public class CPU implements IObservable
              System.out.println("No processes to run: " + currentTime);
 
         }
+    }
+
+    private void issuePageFault(Page page)
+    {
+        ObservablePageFaultMessage pageFaultMessage = new ObservablePageFaultMessage(page, currentTime);
+        notifySubscribers(pageFaultMessage);
     }
 
     @Override

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Memory
+public class Memory implements ISubscriber
 {
     private static final int MAX_FRAMES = 30;
     private int numberOfProcesses;
@@ -130,4 +130,13 @@ public class Memory
     }
 
 
+    @Override
+    public void handleMessage(ObservableMessage message) {
+        if(message instanceof ObservablePageReadyMessage)
+        {
+            Page page = ((ObservablePageReadyMessage) message).getPage();
+            int currentTime = ((ObservablePageReadyMessage) message).getCurrentTime();
+            addToMemory(page, currentTime);
+        }
+    }
 }

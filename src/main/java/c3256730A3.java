@@ -47,6 +47,8 @@ public class c3256730A3 implements ISubscriber
 
 
             CPU cpu = new CPU(copiedProcessList, memory);
+            cpu.addSubscriber(this);
+            currentTime = 0; //Resets for each page replacement algorithm
 
             //While each process still has pages in its page list, keep going
             while(cpu.hasQueuedProcesses() || copiedProcessList.size() > 0)
