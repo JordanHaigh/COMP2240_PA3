@@ -38,7 +38,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
         //}
 
         ///////////SCENARIO 2 - EMPTY FRAME FOR PAGE ENTRY/////////////////////
-        if(memory.processHasReachedMaxAllocation(parentProcess))
+        if(!memory.processHasReachedMaxAllocation(parentProcess))
         {
             //Find the next empty index in the frames
             int foundEmptyIndex = memory.findNextEmptyIndex(); //Will never return -1 due to the if condition

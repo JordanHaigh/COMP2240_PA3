@@ -41,6 +41,10 @@ public class ClockPolicyTests
         {
             if(!page.isLoadedInMemory())
                 memory.addToMemory(page,1);
+            else
+            {
+                page.setUseBit(true);
+            }
         }
 
         Assert.assertEquals(3, memory.getFrames()[0].getPageNumber());

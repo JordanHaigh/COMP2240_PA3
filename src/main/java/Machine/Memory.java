@@ -122,6 +122,7 @@ public class Memory implements ISubscriber
             throw new IllegalArgumentException("Index used to unload page is out of bounds");
 
         frames[index].setLoadedInMemory(false);
+        frames[index].setUseBit(false);
         frames[index] = null;
         size--;
     }
