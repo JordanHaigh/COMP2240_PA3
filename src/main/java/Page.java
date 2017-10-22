@@ -1,7 +1,7 @@
 public class Page
 {
     private int pageNumber;
-    private static Instruction instruction = new Instruction();
+    private static Instruction instruction = new Instruction(); //todo necessary???
 
     private Process process;
     private boolean loadedInMemory;
@@ -17,6 +17,11 @@ public class Page
     public Page(int pageNumber)
     {
         this.pageNumber = pageNumber;
+    }
+
+    public Page(Page page)
+    {
+        this.pageNumber = page.getPageNumber();
     }
 
     public void linkProcessToPage(Process process)

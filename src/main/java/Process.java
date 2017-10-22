@@ -11,7 +11,7 @@ public class Process
     private int startTime;
     private int finishTime;
 
-    private int remainingNumberOfPages;
+   // private int getRemainingNumberOfPages;
     private ProcessState processState;
 
 
@@ -20,7 +20,6 @@ public class Process
     {
         this.id = id;
         this.pageList = pageList;
-        remainingNumberOfPages = pageList.size();
 
         startTime = 0;
         processState = ProcessState.NEW;
@@ -29,11 +28,23 @@ public class Process
             page.linkProcessToPage(this);
     }
 
+    //Copy constructor
+    public Process(Process process)
+    {
+        this.id = process.getId();
+        this.pageList = process.getPageList();
+        startTime = 0;
+        processState = ProcessState.NEW;
+
+        for(Page page: pageList)
+            page.linkProcessToPage(this);
+    }
+
     public int getId() { return id; }
+    public List<Page> getPageList() {return pageList; }
     public boolean isNew() { return processState.equals(ProcessState.NEW); }
     public boolean isReady() { return processState.equals(ProcessState.READY); }
     public boolean isRunning() { return processState.equals(ProcessState.RUNNING); }
-    public boolean isFinishedCycling() {return remainingNumberOfPages == 0;}
     public int getStartTime() {return startTime; }
     public void setStartTime(int startTime) {this.startTime = startTime;}
     public int getFinishTime(){return finishTime; }
@@ -117,9 +128,9 @@ public class Process
     private int nextPageIndex = 0;
 
     public Page getNextPageFromList() {return pageList.get(nextPageIndex++);}
-    public boolean hasReachedEndOfPageList() { return remainingNumberOfPages() == 0; }
+    public boolean hasReachedEndOfPageList() { return getRemainingNumberOfPages() == 0; }
 
-    public int remainingNumberOfPages() {return  pageList.size() - nextPageIndex; }
+    public int getRemainingNumberOfPages() {return  pageList.size() - nextPageIndex; }
 
 
     /**

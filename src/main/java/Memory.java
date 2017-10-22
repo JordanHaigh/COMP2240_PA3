@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Memory
 {
-    private static final int MAX_FRAMES = 3; //todo change back to 30
+    private static final int MAX_FRAMES = 30;
     private int numberOfProcesses;
     private int fixedAllocationNumber;
     private IPageReplacementAlgorithm pageReplacementAlgorithm;
@@ -34,6 +35,14 @@ public class Memory
     public int getMaxFrames() {return MAX_FRAMES; }
 
     public Page[] getFrames(){ return frames; }
+
+    public void clear()
+    {
+        pageReplacementAlgorithm = null;
+
+        size = 0;
+        Arrays.fill(frames, null);
+    }
 
     public int getCountOfAllPagesRunning()
     {

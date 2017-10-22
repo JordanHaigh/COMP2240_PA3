@@ -7,7 +7,21 @@ import java.util.List;
 public class ProcessFileReader
 {
     private PageGeneratorFactory factory = new PageGeneratorFactory();
+    private List<Process> processList = new ArrayList<>();
 
+    public List<Process> run(String[]args) throws IOException {
+        if(args.length == 0)
+            throw new IllegalArgumentException("Error. Missing program arguments");
+
+        for(String filePath: args)
+        {
+            //Read each process file
+            Process process = readProcess(filePath);
+            processList.add(process);
+        }
+
+        return processList;
+    }
 
     public Process readProcess(String filePath) throws IOException {
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath)))

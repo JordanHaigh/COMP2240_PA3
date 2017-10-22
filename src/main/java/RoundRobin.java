@@ -32,7 +32,7 @@ public class RoundRobin implements ISchedulingAlgorithm
 
         cpu.performProcessing(process,timeRequiredToRunNextProcess(process));
 
-        if(!process.isFinishedCycling())
+        if(!process.hasReachedEndOfPageList())
             process.interrupt(cpu.getCurrentTime());
         else
             process.exit(cpu.getCurrentTime());
