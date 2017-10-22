@@ -6,6 +6,9 @@ import java.util.List;
 
 public class ProcessFileReader
 {
+    private PageGeneratorFactory factory = new PageGeneratorFactory();
+
+
     public Process readProcess(String filePath) throws IOException {
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath)))
         {
@@ -57,15 +60,17 @@ public class ProcessFileReader
 
         List<Page> pageList = new ArrayList<>();
 
+
         for(String page: individualPages)
         {
             int pageId = Integer.parseInt(page);
-            pageList.add(new Page(pageId));
+
+            Page newPage = factory.getPage(processId, pageId);
+
+            pageList.add(newPage);
         }
 
-        Process process = new Process(processId, pageList);
-
-        return process;
+        return new Process(processId, pageList);
     }
 
     private String cleanseProcessData(String fileContents)
@@ -83,7 +88,5 @@ public class ProcessFileReader
 
         return cleansed;
     }
-
-
 
 }
