@@ -43,6 +43,7 @@ public class CPU implements IObservable
         return currentTime;
     }
     public boolean hasQueuedProcesses() {return processList.size() > 0; }
+    public List<SchedulingProcess> getCompletedProcessList(){return completedProcessList; }
 
     /**
      * public void performProcessing(Model.SchedulingProcess process, int numberOfCycles)
@@ -131,6 +132,9 @@ public class CPU implements IObservable
     {
         SchedulingProcess parentProcess = page.getParentProcess();
         parentProcess.block(currentTime);
+
+        parentProcess.addPageFaultTimeToList(currentTime);
+
         ObservablePageFaultMessage pageFaultMessage = new ObservablePageFaultMessage(page, currentTime);
         notifySubscribers(pageFaultMessage);
     }

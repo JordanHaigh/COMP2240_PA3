@@ -10,6 +10,7 @@ import ObserverPattern.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class c3256730A3 implements ISubscriber
@@ -17,7 +18,8 @@ public class c3256730A3 implements ISubscriber
     private int currentTime = 0;
     private ProcessFileReader processFileReader = new ProcessFileReader();
     private List<SchedulingProcess> masterSchedulingProcessList = new ArrayList<>();
-    List<IPageReplacementAlgorithm> pageReplacementAlgorithms = new ArrayList<>();
+    private List<IPageReplacementAlgorithm> pageReplacementAlgorithms = new ArrayList<>();
+    private CPU cpu;
 
 
 
@@ -58,7 +60,7 @@ public class c3256730A3 implements ISubscriber
 
 
 
-            CPU cpu = new CPU(copiedSchedulingProcessList, memory);
+            cpu = new CPU(copiedSchedulingProcessList, memory);
             cpu.addSubscriber(this);
             currentTime = 0; //Resets for each page replacement algorithm
 
@@ -81,14 +83,22 @@ public class c3256730A3 implements ISubscriber
         sb.append(pageReplacementAlgorithm.toString())
         .append("\nPID \t Turnaround Time \t\t # Faults \t Fault Times  ");
 
-        for(SchedulingProcess process: copiedSchedulingProcessList)
+        List<SchedulingProcess> completedProcessList = cpu.getCompletedProcessList();
+
+
+        //Using Java Lambdas here
+        completedProcessList.sort(SchedulingProcess::compareTo);
+
+
+        for(SchedulingProcess process: completedProcessList)
         {
-            sb.append(process.getId())
-                    .append(" \t ")
-                    .append(process.getTurnaroundTime())
+            sb.append("\n")
+                    .append(process.getId())
                     .append(" \t\t ")
-                    .append(process.getNumberOfFaults())
-                    .append(" \t ")
+                    .append(process.getTurnaroundTime())
+                    .append(" \t\t\t\t\t ")
+                    .append(process.getNumberFaultTimes())
+                    .append(" \t\t\t ")
                     .append(process.getFaultTimesToString());
         }
 

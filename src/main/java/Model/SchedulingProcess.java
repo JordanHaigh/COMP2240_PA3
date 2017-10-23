@@ -3,7 +3,7 @@ package Model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SchedulingProcess
+public class SchedulingProcess implements Comparable<SchedulingProcess>
 {
     private List<Page> pageList = new ArrayList<>();
     private List<Page> completedPageList = new ArrayList<>();
@@ -14,8 +14,8 @@ public class SchedulingProcess
     private int finishTime;
     private int turnaroundTime;
 
-    private int numberOfFaults = 0;
     private List<Integer> faultTimes = new ArrayList<>();
+
 
    // private int getRemainingNumberOfPages;
     private ProcessState processState;
@@ -57,7 +57,7 @@ public class SchedulingProcess
     public int getFinishTime(){return finishTime; }
     public void setFinishTime(int finishTime){this.finishTime = finishTime; }
     public int getTurnaroundTime(){return finishTime - startTime;}
-    public int getNumberOfFaults() {return numberOfFaults; }
+    public int getNumberFaultTimes(){return faultTimes.size(); }
     public String getFaultTimesToString()
     {
         StringBuilder sb = new StringBuilder();
@@ -196,7 +196,6 @@ public class SchedulingProcess
         //Calculates the distinct pages that are running in memory
     }
 
-    public void incrementNumberOfPageFaults(){numberOfFaults++;}
 
     public void addPageFaultTimeToList(int pageFaultTime)
     {
@@ -208,6 +207,16 @@ public class SchedulingProcess
         return "Process{" +
                 "id=" + id + " state=" + processState+
                 '}';
+    }
+
+    @Override
+    public int compareTo(SchedulingProcess o) {
+        if(this.getId() < o.getId())
+            return -1;
+        else if(this.getId() > o.getId())
+            return 1;
+        else
+            return 0;
     }
 }
 

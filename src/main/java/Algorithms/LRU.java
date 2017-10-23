@@ -63,7 +63,6 @@ public class LRU implements IPageReplacementAlgorithm {
 
 
         return leastRecentlyUsedPage.getIndex();
-        //todo implement page least recent used time
 
 
     }
