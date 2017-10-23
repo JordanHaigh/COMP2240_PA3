@@ -86,5 +86,10 @@ public class ClockPolicy implements IPageReplacementAlgorithm
             this.currentClockIndex++;
     }
 
+    @Override
+    public String toString() {
+        return "Clock - Fixed";
+    }
+
 
 }

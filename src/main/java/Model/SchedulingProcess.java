@@ -12,6 +12,10 @@ public class SchedulingProcess
 
     private int startTime;
     private int finishTime;
+    private int turnaroundTime;
+
+    private int numberOfFaults = 0;
+    private List<Integer> faultTimes = new ArrayList<>();
 
    // private int getRemainingNumberOfPages;
     private ProcessState processState;
@@ -24,6 +28,7 @@ public class SchedulingProcess
         this.pageList = pageList;
 
         startTime = 0;
+        finishTime = 0;
         processState = ProcessState.NEW;
 
         for(Page page: pageList)
@@ -51,6 +56,21 @@ public class SchedulingProcess
     public void setStartTime(int startTime) {this.startTime = startTime;}
     public int getFinishTime(){return finishTime; }
     public void setFinishTime(int finishTime){this.finishTime = finishTime; }
+    public int getTurnaroundTime(){return finishTime - startTime;}
+    public int getNumberOfFaults() {return numberOfFaults; }
+    public String getFaultTimesToString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for(Integer time: faultTimes)
+        {
+            sb.append(time);
+            sb.append(time.equals(faultTimes.get(faultTimes.size()-1)) ? "}" : ", ");
+        }
+
+        return sb.toString();
+
+    }
 
     public boolean isBlocked() { return processState.equals(ProcessState.BLOCKED); }
 
@@ -61,14 +81,14 @@ public class SchedulingProcess
         if (isRunning())
             processState = ProcessState.BLOCKED;
         else
-            runTimeExceptionMessage(ProcessState.BLOCKED);
+            runTimeExceptionMessage(ProcessState.RUNNING);
     }
 
     public void unblock(int currentTime) {
         if(isBlocked())
             processState = ProcessState.READY;
         else
-            runTimeExceptionMessage(ProcessState.READY);
+            runTimeExceptionMessage(ProcessState.BLOCKED);
     }
 
     public void admit(int currentTime)
@@ -143,6 +163,7 @@ public class SchedulingProcess
         Page nextPage = getNextPageFromList();
         nextPage.setTimeLastUsed(currentTime);
         nextPageIndex++;
+        nextPage.setUseBit(true);
 
     }
 
@@ -175,6 +196,19 @@ public class SchedulingProcess
         //Calculates the distinct pages that are running in memory
     }
 
+    public void incrementNumberOfPageFaults(){numberOfFaults++;}
+
+    public void addPageFaultTimeToList(int pageFaultTime)
+    {
+        faultTimes.add(pageFaultTime);
+    }
+
+    @Override
+    public String toString() {
+        return "Process{" +
+                "id=" + id + " state=" + processState+
+                '}';
+    }
 }
 
 

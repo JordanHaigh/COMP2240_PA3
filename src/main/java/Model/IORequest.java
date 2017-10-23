@@ -1,7 +1,17 @@
-package Machine;
+package Model;
 
-/**
- * Created by Administrator on 23-Oct-17.
- */
-public class IORequest {
+public class IORequest
+{
+    private Page page;
+    private int pageReadyTime;
+
+    public IORequest(Page page, int pageReadyTime)
+    {
+        this.page = page;
+        this.pageReadyTime = pageReadyTime;
+    }
+
+    public Page getPage() { return page; }
+
+    public int getPageReadyTime() { return pageReadyTime; }
 }

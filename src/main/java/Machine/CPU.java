@@ -62,10 +62,16 @@ public class CPU implements IObservable
             Page nextPageFromProcess = process.getNextPageFromList();
 
             if (!nextPageFromProcess.isLoadedInMemory())
+            {
                 issuePageFault(nextPageFromProcess);
+                System.out.println("Time  " + currentTime + ": " + nextPageFromProcess.getParentProcess().toString() + ": PAGE("+ nextPageFromProcess.getPageNumber()+") FAULT");
+                break; //todo double check
+            }
             else {
                 process.run(currentTime);
+                System.out.println("Time  " + currentTime + ": " + nextPageFromProcess.getParentProcess().toString() + ": PAGE("+ nextPageFromProcess.getPageNumber()+") RUNNING");
                 updateTimeTick(Instruction.INSTRUCTION_TIME);
+
             }
         }
 
@@ -98,11 +104,17 @@ public class CPU implements IObservable
 
     public void cycle()
     {
+        checkAllProcessesBlocked();
+
         SchedulingProcess nextProcessToRun = schedulingAlgorithm.nextProcessToRun(processList);
 
-        if(nextProcessToRun != null)
+        if(nextProcessToRun != null && !nextProcessToRun.isBlocked())
             schedulingAlgorithm.runProcess(nextProcessToRun, this);
-        else if (nextProcessToRun.isBlocked()) {
+        else if (nextProcessToRun.isBlocked())
+        {
+            processList.remove(nextProcessToRun);
+            processList.add(nextProcessToRun);
+            //updateTimeTick(1);
             //process is waiting for pages to be loaded into memory.
             //Cycle for RR cycles and see if it ends up being loaded during this time quantum
         }
@@ -117,8 +129,37 @@ public class CPU implements IObservable
 
     private void issuePageFault(Page page)
     {
+        SchedulingProcess parentProcess = page.getParentProcess();
+        parentProcess.block(currentTime);
         ObservablePageFaultMessage pageFaultMessage = new ObservablePageFaultMessage(page, currentTime);
         notifySubscribers(pageFaultMessage);
+    }
+
+    private void checkAllProcessesBlocked()
+    {
+        boolean allProcessesBlocked = true;
+        for(SchedulingProcess process: processList)
+        {
+            allProcessesBlocked = process.isBlocked();
+            if(!allProcessesBlocked)
+                break;
+        }
+
+        //check if all processes blocked
+        if(allProcessesBlocked)
+        {
+            //if all blocked, update to minimum time that pages is ready
+            //Find minimum time to update to
+            int n = getNextTimeReadyFromIOController();
+
+            int delta = n-currentTime;
+            updateTimeTick(delta);
+        }
+    }
+
+    private int getNextTimeReadyFromIOController()
+    {
+        return ioController.getNextIORequest().getPageReadyTime();
     }
 
     @Override

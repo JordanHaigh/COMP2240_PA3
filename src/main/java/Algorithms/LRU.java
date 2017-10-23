@@ -5,18 +5,15 @@ import Model.*;
 
 import java.util.List;
 
-public class LRU implements IPageReplacementAlgorithm
-{
+public class LRU implements IPageReplacementAlgorithm {
     Memory memory;
 
-    public LRU(Memory memory)
-    {
+    public LRU(Memory memory) {
         this.memory = memory;
     }
 
     @Override
-    public int getReplacementIndex(Page pageToInsert)
-    {
+    public int getReplacementIndex(Page pageToInsert) {
         //Need to find out who the page belongs to
         SchedulingProcess parentProcess = pageToInsert.getParentProcess();
 
@@ -44,8 +41,7 @@ public class LRU implements IPageReplacementAlgorithm
         //////////////SCENARIO 2 - EMPTY FRAMES FOR PAGE ENTRY/////////////////////
 
         //Cater for the scenario that frames are empty
-        if(loadedProcessPages.size() < memory.getFixedAllocationNumber())
-        {
+        if (loadedProcessPages.size() < memory.getFixedAllocationNumber()) {
             //Find the next empty index in the frames
             return memory.findNextEmptyIndex(); //Will never return -1 due to the if condition
         }
@@ -60,14 +56,20 @@ public class LRU implements IPageReplacementAlgorithm
         //look through the list of pages loaded in memory and keep track of what their last time used is
         //then determine what the lowest time value is of all pages - this will be the page to be replaced.
 
-        for(Frame frame: loadedProcessPages)
-        {
-            if(frame.getPage().getTimeLastUsed() < leastRecentlyUsedPage.getPage().getTimeLastUsed())
+        for (Frame frame : loadedProcessPages) {
+            if (frame.getPage().getTimeLastUsed() < leastRecentlyUsedPage.getPage().getTimeLastUsed())
                 leastRecentlyUsedPage = frame;
         }
 
 
         return leastRecentlyUsedPage.getIndex();
         //todo implement page least recent used time
+
+
+    }
+
+    @Override
+    public String toString() {
+        return "LRU - Fixed";
     }
 }

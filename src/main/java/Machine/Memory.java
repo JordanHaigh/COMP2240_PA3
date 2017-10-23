@@ -114,6 +114,12 @@ public class Memory implements ISubscriber
         loadPageAtIndex(pageToInsert, index, currentTime);
         pageToInsert.setTimeLastUsed(currentTime);
 
+
+        SchedulingProcess parentProcess = pageToInsert.getParentProcess();
+
+        if(parentProcess.isBlocked())
+            parentProcess.unblock(currentTime);
+
     }
 
     private void unloadPageAtIndex(int index, int currentTime)
@@ -145,7 +151,10 @@ public class Memory implements ISubscriber
         {
             Page page = ((ObservablePageReadyMessage) message).getPage();
             int currentTime = ((ObservablePageReadyMessage) message).getCurrentTime();
+
             addToMemory(page, currentTime);
+            System.out.println("Time  " + currentTime + ": " + page.getParentProcess().toString() + ": PAGE ("+page.getPageNumber()+")LOADED IN MEMORY");
+
         }
     }
 }

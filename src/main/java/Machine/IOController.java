@@ -30,6 +30,8 @@ public class IOController implements ISubscriber, IObservable
         return false;
     }
 
+    public IORequest getNextIORequest()  { return ioRequests.get(0);  }
+
     public void checkIOListForReadiedRequests(int cpuTime)
     {
         List<IORequest> requestsMarkedForRemoval = new ArrayList<>();
@@ -87,19 +89,5 @@ public class IOController implements ISubscriber, IObservable
 
     }
 
-    private class IORequest
-    {
-        private Page page;
-        private int pageReadyTime;
 
-        public IORequest(Page page, int pageReadyTime)
-        {
-            this.page = page;
-            this.pageReadyTime = pageReadyTime;
-        }
-
-        public Page getPage() { return page; }
-
-        public int getPageReadyTime() { return pageReadyTime; }
-    }
 }

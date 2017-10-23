@@ -69,9 +69,30 @@ public class c3256730A3 implements ISubscriber
             }
 
             //individual statistics
+            runIndividualStatistics(pageReplacementAlgorithm, copiedSchedulingProcessList);
         }
 
-        //final statistics
+    }
+
+    private void runIndividualStatistics(IPageReplacementAlgorithm pageReplacementAlgorithm, List<SchedulingProcess> copiedSchedulingProcessList)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(pageReplacementAlgorithm.toString())
+        .append("\nPID \t Turnaround Time \t\t # Faults \t Fault Times  ");
+
+        for(SchedulingProcess process: copiedSchedulingProcessList)
+        {
+            sb.append(process.getId())
+                    .append(" \t ")
+                    .append(process.getTurnaroundTime())
+                    .append(" \t\t ")
+                    .append(process.getNumberOfFaults())
+                    .append(" \t ")
+                    .append(process.getFaultTimesToString());
+        }
+
+        System.out.println(sb.toString());
     }
 
     @Override
