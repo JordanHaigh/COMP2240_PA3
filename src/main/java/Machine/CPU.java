@@ -65,12 +65,12 @@ public class CPU implements IObservable
             if (!nextPageFromProcess.isLoadedInMemory())
             {
                 issuePageFault(nextPageFromProcess);
-                System.out.println("Time  " + currentTime + ": " + nextPageFromProcess.getParentProcess().toString() + ": PAGE("+ nextPageFromProcess.getPageNumber()+") FAULT");
-                break; //todo double check
+                //System.out.println("Time  " + currentTime + ": " + nextPageFromProcess.getParentProcess().toString() + ": PAGE("+ nextPageFromProcess.getPageNumber()+") FAULT");
+                break;
             }
             else {
                 process.run(currentTime);
-                System.out.println("Time  " + currentTime + ": " + nextPageFromProcess.getParentProcess().toString() + ": PAGE("+ nextPageFromProcess.getPageNumber()+") RUNNING");
+                //System.out.println("Time  " + currentTime + ": " + nextPageFromProcess.getParentProcess().toString() + ": PAGE("+ nextPageFromProcess.getPageNumber()+") RUNNING");
                 updateTimeTick(Instruction.INSTRUCTION_TIME);
 
             }

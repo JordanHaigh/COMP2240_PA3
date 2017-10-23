@@ -65,9 +65,8 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
         for(Integer time: faultTimes)
         {
             sb.append(time);
-            sb.append(", ");
+            sb.append(time.equals(faultTimes.get(faultTimes.size()-1)) ? "}" : ", ");
         }
-        sb.append("}");
 
         return sb.toString();
 
@@ -77,8 +76,6 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
 
     public void block(int currentTime)
     {
-        //todo do i need to cater for blocked times or whatnot
-
         if (isRunning())
             processState = ProcessState.BLOCKED;
         else

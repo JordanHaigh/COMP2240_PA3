@@ -153,7 +153,7 @@ public class Memory implements ISubscriber
             int currentTime = ((ObservablePageReadyMessage) message).getCurrentTime();
 
             addToMemory(page, currentTime);
-            System.out.println("Time  " + currentTime + ": " + page.getParentProcess().toString() + ": PAGE ("+page.getPageNumber()+")LOADED IN MEMORY");
+            //System.out.println("Time  " + currentTime + ": " + page.getParentProcess().toString() + ": PAGE ("+page.getPageNumber()+")LOADED IN MEMORY");
 
         }
     }

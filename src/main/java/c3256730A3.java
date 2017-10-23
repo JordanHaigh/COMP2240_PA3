@@ -38,7 +38,7 @@ public class c3256730A3 implements ISubscriber
 
         IPageReplacementAlgorithm lru = new LRU(memory);
         IPageReplacementAlgorithm clockPolicy = new ClockPolicy(memory);
-       // pageReplacementAlgorithms.add(lru); //todo undo later
+        pageReplacementAlgorithms.add(lru);
         pageReplacementAlgorithms.add(clockPolicy);
 
 
@@ -67,15 +67,12 @@ public class c3256730A3 implements ISubscriber
             //While each process still has pages in its page list, keep going
             while(cpu.hasQueuedProcesses() || copiedSchedulingProcessList.size() > 0)
             {
-                if(currentTime == 97)
-                    System.out.println("JUMP IN TIME - 97");
-
-
                 cpu.cycle();
             }
 
             //individual statistics
             runIndividualStatistics(pageReplacementAlgorithm, copiedSchedulingProcessList);
+            System.out.println();
         }
 
     }
