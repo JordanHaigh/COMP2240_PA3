@@ -62,7 +62,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
                     {
                         // if it is 1, we set it to 0 and move the clock head forward
                         frames[i].setUseBit(false);
-                        moveClockIndex();
+                        //moveClockIndex();
                     }
                     else
                     {
