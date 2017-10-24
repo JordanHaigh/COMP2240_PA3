@@ -14,7 +14,11 @@ import java.util.Collections;
 import java.util.List;
 
 
-
+/**
+ * Student Number: 3256730 Jordan Haigh
+ * COMP2240 A3
+ * Main entry of the program
+ */
 public class c3256730A3 implements ISubscriber
 {
     private int currentTime = 0;
@@ -79,6 +83,12 @@ public class c3256730A3 implements ISubscriber
 
     }
 
+    /**
+     * private void runIndividuaStatistics(IPageReplacementAlgorithm, List<SchedulingProcess>)
+     * Runs data statistics for a page replacement algorithm
+     * @param pageReplacementAlgorithm - Page replacement algorithm
+     * @param copiedSchedulingProcessList - Scheduling Process List
+     */
     private void runIndividualStatistics(IPageReplacementAlgorithm pageReplacementAlgorithm, List<SchedulingProcess> copiedSchedulingProcessList)
     {
         StringBuilder sb = new StringBuilder();
@@ -108,6 +118,11 @@ public class c3256730A3 implements ISubscriber
         System.out.println(sb.toString());
     }
 
+    /**
+     * public void handleMessage (ObservableMessage message)
+     * Handles message and updates the current time
+     * @param message - Message containing the cpu time
+     */
     @Override
     public void handleMessage(ObservableMessage message) {
         if(message instanceof ObservableCPUTimeMessage)
