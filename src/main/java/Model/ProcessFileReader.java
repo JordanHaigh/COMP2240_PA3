@@ -6,11 +6,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Student Number: 3256730 Jordan Haigh
+ * COMP2240 A3
+ * ProcessFileReader.java Class reads from a data file and extracts all information relevant for the program.
+ */
 public class ProcessFileReader
 {
     private PageGeneratorFactory factory = new PageGeneratorFactory();
     private List<SchedulingProcess> schedulingProcessList = new ArrayList<>();
 
+    /**
+     * public List<SchedulingProcess> run(String[]args)
+     * Checks if there are arguments in the command line.
+     * Builds a list of processes and its pages from each argument and adds to a list
+     * @param args - String arguments from command line
+     * @return - List of Scheduling Processes
+     * @throws IOException
+     */
     public List<SchedulingProcess> run(String[]args) throws IOException {
         if(args.length == 0)
             throw new IllegalArgumentException("Error. Missing program arguments");
@@ -25,6 +38,12 @@ public class ProcessFileReader
         return schedulingProcessList;
     }
 
+    /**
+     * public SchedulingProcess readProcess(String filePath)
+     * Reads the file location and processes the data into a list of processes
+     * @param filePath - Filepath of data file
+     * @return - List of Processes found in the data file
+     */
     public SchedulingProcess readProcess(String filePath) throws IOException {
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath)))
         {
@@ -59,7 +78,15 @@ public class ProcessFileReader
         return sb.toString();
     }
 
-
+    /**
+     * private SchedulingProcess readProcessDataFromString(String fileContents, String filePath) throws Exception
+     * Firstly cleanses the string and stores in another variable so the original text data is unaltered
+     * Then creates a process from the cleansed string dataset
+     * @param fileContents - Line of all data
+     * @param filePath - Name of file path
+     * @return - List<Process> Object with all Processes found in data file
+     * @throws Exception - Check if file was not imported correctly
+     */
     private SchedulingProcess readProcessDataFromString(String fileContents, String filePath)
     {
         String processName = filePath.replaceAll(".txt","")
@@ -88,7 +115,12 @@ public class ProcessFileReader
 
         return new SchedulingProcess(processId, pageList);
     }
-
+    /**
+     * private String cleanseProcessDataFile(String fileContents)
+     * Removes all unnecessary characters and returns a cleaner string to be worked with
+     * @param fileContents - Data file to string
+     * @return - String of all data without certain characters (Double spaces, new lines, tabs)
+     */
     private String cleanseProcessData(String fileContents)
     {
         String cleansed = fileContents.replaceAll("begin\n", "")

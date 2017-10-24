@@ -2,7 +2,11 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Student Number: 3256730 Jordan Haigh
+ * COMP2240 A3
+ * SchedulingProcess.java contains all Process information, including a page list for each process
+ */
 public class SchedulingProcess implements Comparable<SchedulingProcess>
 {
     private List<Page> pageList = new ArrayList<>();
@@ -12,7 +16,6 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
 
     private int startTime;
     private int finishTime;
-    private int turnaroundTime;
 
     private List<Integer> faultTimes = new ArrayList<>();
 
@@ -20,8 +23,15 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
    // private int getRemainingNumberOfPages;
     private ProcessState processState;
 
+    private int nextPageIndex = 0;
 
 
+    /**
+     * public SchedulingProcess(int id, List<Page> pageList)
+     * Overloaded Constructor
+     * @param id - ID of Process
+     * @param pageList - List of Pages for Process
+     */
     public SchedulingProcess(int id, List<Page> pageList)
     {
         this.id = id;
@@ -35,6 +45,11 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
             page.linkProcessToPage(this);
     }
 
+    /**
+     * public SchedulingProcess(SchedulingProcess schedulingProcess)
+     * Copy Constructor
+     * @param schedulingProcess - Other SchedulingProcess
+     */
     //Copy constructor
     public SchedulingProcess(SchedulingProcess schedulingProcess)
     {
@@ -47,17 +62,77 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
             page.linkProcessToPage(this);
     }
 
+    /**
+     * public int getID()
+     * @return  Process ID
+     */
     public int getId() { return id; }
+
+    /**
+     * public List<Page> getPageList()
+     * @return - Page List
+     */
     public List<Page> getPageList() {return pageList; }
+
+    /**
+     * public boolean isNew()
+     * @return - True or false if in the NEW State
+     */
     public boolean isNew() { return processState.equals(ProcessState.NEW); }
+
+    /**
+     * public boolean isReady()
+     * @return - True or false if in the READY state
+     */
     public boolean isReady() { return processState.equals(ProcessState.READY); }
+
+    /**
+     * public boolean isRunning()
+     * @return - True or false if in the RUNNING state
+     */
     public boolean isRunning() { return processState.equals(ProcessState.RUNNING); }
-    public int getStartTime() {return startTime; }
-    public void setStartTime(int startTime) {this.startTime = startTime;}
-    public int getFinishTime(){return finishTime; }
-    public void setFinishTime(int finishTime){this.finishTime = finishTime; }
+
+    /**
+     * public boolean isBlocked()
+     * @return - True or False if in the BLOCKED state
+     */
+    public boolean isBlocked() { return processState.equals(ProcessState.BLOCKED); }
+
+
+    /**
+     * public int getTurnaroundTime()
+     * @return - Turnaround time of Process
+     */
     public int getTurnaroundTime(){return finishTime - startTime;}
+
+    /**
+     * public page getNextPageFromList()
+     * @return - Next page in page list
+     */
+    public Page getNextPageFromList() {return pageList.get(nextPageIndex);}
+
+    /**
+     * public boolean hasReachedEndOfPageList()
+     * @return - True or false if there are no more pages in the page list
+     */
+    public boolean hasReachedEndOfPageList() { return getRemainingNumberOfPages() == 0; }
+
+    /**
+     * public int getRemainingNumberOfPages()
+     * @return - Number of pages remaining in the page list
+     */
+    public int getRemainingNumberOfPages() {return  pageList.size() - nextPageIndex; }
+
+    /**
+     * public int getNumberFaultTimes()
+     * @return - Size of the fault Times list
+     */
     public int getNumberFaultTimes(){return faultTimes.size(); }
+
+    /**
+     * public String getFaultTimesToString()
+     * @return - Fault times in string format
+     */
     public String getFaultTimesToString()
     {
         StringBuilder sb = new StringBuilder();
@@ -72,8 +147,12 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
 
     }
 
-    public boolean isBlocked() { return processState.equals(ProcessState.BLOCKED); }
 
+    /**
+     * public void block(int currentTime)
+     * Updates process state to BLOCKED if in the RUNNING state
+     * @param currentTime
+     */
     public void block(int currentTime)
     {
         if (isRunning())
@@ -82,6 +161,11 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
             runTimeExceptionMessage(ProcessState.RUNNING);
     }
 
+    /**
+     * public void unblock(int currentTime)
+     * Updates the Process state to READY if in the BLOCKED State
+     * @param currentTime
+     */
     public void unblock(int currentTime) {
         if(isBlocked())
             processState = ProcessState.READY;
@@ -89,6 +173,10 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
             runTimeExceptionMessage(ProcessState.BLOCKED);
     }
 
+    /**
+     * public void admit
+     * Updates the process state to READY if it is NEW
+     */
     public void admit(int currentTime)
     {
         //Precondition check to determine if process is in the NEW state
@@ -103,6 +191,10 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
             runTimeExceptionMessage(ProcessState.NEW);
     }
 
+    /**
+     * public void dispatch
+     * Updates the process state to RUNNING if it is READY
+     */
     public void dispatch(int currentTime)
     {
         //Precondition check to determine if the process is in the READY state
@@ -117,6 +209,10 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
             runTimeExceptionMessage(ProcessState.READY);
     }
 
+    /**
+     * public void interrupt()
+     * Updates the process state to READY if it is RUNNING
+     */
     public void interrupt(int currentTime)
     {
         //Precondition check to determine if the process is in the RUNNING state
@@ -131,6 +227,12 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
             runTimeExceptionMessage(ProcessState.RUNNING);
     }
 
+    /**
+     * public void exit(int currentTime)
+     * Updates the process state to TERMINATED if it is RUNNING
+     * Updates the finish time to the current time and calculates other statistics
+     * @param currentTime - Current time on the cpu
+     */
     public void exit(int currentTime)
     {
         if(isRunning())
@@ -144,17 +246,9 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
         }
     }
 
-
-    private int nextPageIndex = 0;
-
-    public Page getNextPageFromList() {return pageList.get(nextPageIndex);}
-    public boolean hasReachedEndOfPageList() { return getRemainingNumberOfPages() == 0; }
-
-    public int getRemainingNumberOfPages() {return  pageList.size() - nextPageIndex; }
-
-
     /**
      * public void run()
+     * Updates the next page index and sets the use bit to true
      */
     public void run(int currentTime)
     {
@@ -175,31 +269,34 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
         throw new RuntimeException("Model.SchedulingProcess is not in the " + requiredState + "state for correct transition. Actual State: " + processState);
     }
 
-   /* public int getCurrentNumberPagesRunning()
-    {
-        int count = 0;
-        for(Page page: pageList)
-            if(page.isLoadedInMemory())
-                count++;
 
-        return count;
-    }*/
+    /**
+     * public long countDistinctProcessesRunning()
+     * @return - Distinct pages that are running in memory
+     */
 
-
-    //https://www.leveluplunch.com/java/examples/count-boolean-true-values-in-arraylist/
-    //NOTE: This section is using Lambdas, you will need to use Java 1.8 for this submission
     public long countDistinctProcessesRunning()
     {
+        //https://www.leveluplunch.com/java/examples/count-boolean-true-values-in-arraylist/
+        //NOTE: This section is using Lambdas, you will need to use Java 1.8 for this submission
         return pageList.stream().distinct().filter(p -> p.isLoadedInMemory() == true).count();
         //Calculates the distinct pages that are running in memory
     }
 
 
+    /**
+     * public void addPageFaultTimeToList(int pageFaultTime)
+     * @param pageFaultTime - Fault time to be added to list
+     */
     public void addPageFaultTimeToList(int pageFaultTime)
     {
         faultTimes.add(pageFaultTime);
     }
 
+    /**
+     * public String toString()
+     * @return - Process information to string
+     */
     @Override
     public String toString() {
         return "Process{" +
@@ -207,6 +304,11 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
                 '}';
     }
 
+    /**
+     * public int compareTo(SchedulingProcess o)
+     * @param o - Second Scheduling process to compare to
+     * @return - Int comparison determining position
+     */
     @Override
     public int compareTo(SchedulingProcess o) {
         if(this.getId() < o.getId())
