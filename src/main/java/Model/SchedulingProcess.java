@@ -25,6 +25,11 @@ public class SchedulingProcess implements Comparable<SchedulingProcess>
 
     private int nextPageIndex = 0;
 
+    private int clockIndex = 0;
+    public void incrementClockIndex(){clockIndex ++;}
+    public void resetClockIndex(){clockIndex = 0;}
+    public int getClockIndex(){return clockIndex; }
+
 
     /**
      * public SchedulingProcess(int id, List<Page> pageList)

@@ -1,8 +1,11 @@
 package Algorithms;
 
 import Machine.Memory;
+import Model.Frame;
 import Model.Page;
 import Model.SchedulingProcess;
+
+import java.util.List;
 
 /**
  * Student Number: 3256730 Jordan Haigh
@@ -21,8 +24,8 @@ public class ClockPolicy implements IPageReplacementAlgorithm
      */
     public ClockPolicy(Memory memory) {this.memory = memory; }
 
-    private int currentClockIndex = 0;
-
+    private int currentClockIndex;
+    private SchedulingProcess currentProcess;
 
     /**
      * public int getReplacementIndex(Page pageToInsert)
@@ -35,6 +38,11 @@ public class ClockPolicy implements IPageReplacementAlgorithm
     {
         Page[] frames = memory.getFrames();
         SchedulingProcess parentProcess = pageToInsert.getParentProcess();
+
+        currentProcess = parentProcess;
+        currentClockIndex = parentProcess.getClockIndex();
+        List<Frame> loadedProcessPages = memory.findAllPagesInMemory(parentProcess);
+
 
 
         ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
@@ -69,7 +77,8 @@ public class ClockPolicy implements IPageReplacementAlgorithm
 
         while(foundIndex == -1)
         {
-            for(int i = currentClockIndex; i < memory.getCountOfAllPagesRunning(); i++)
+            for(int i = currentClockIndex; i < loadedProcessPages.size(); i++)
+            //for(int i = currentClockIndex; i < memory.getCountOfAllPagesRunning(); i++)
             {
                 // Starting at the currentClockIndex, check if the page's use bit is set to 0
                 if(frames[i].getParentProcess() == parentProcess)
@@ -102,9 +111,15 @@ public class ClockPolicy implements IPageReplacementAlgorithm
     private void moveClockIndex()
     {
         if(currentClockIndex == memory.getMaxFrames()-1)
+        {
             this.currentClockIndex = 0;
+            currentProcess.resetClockIndex();
+        }
         else
+        {
             this.currentClockIndex++;
+            currentProcess.incrementClockIndex();
+        }
     }
 
     /**
