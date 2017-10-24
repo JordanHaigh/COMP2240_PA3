@@ -4,16 +4,32 @@ import Machine.Memory;
 import Model.Page;
 import Model.SchedulingProcess;
 
+/**
+ * Student Number: 3256730 Jordan Haigh
+ * COMP2240 A3
+ * ClockPolicy.java is one of the page replacement algorithms.
+ * Algorithm utilises a clock header to track the last position where a page was manipulated
+ */
 public class ClockPolicy implements IPageReplacementAlgorithm
 {
     private Memory memory;
 
 
+    /**
+     * public ClockPolicy(Memory memory)
+     * @param memory - Memory Object to connect Clock Policy
+     */
     public ClockPolicy(Memory memory) {this.memory = memory; }
 
     private int currentClockIndex = 0;
 
 
+    /**
+     * public int getReplacementIndex(Page pageToInsert)
+     * Determines if there are empty positions or if the program needs to remove a running page
+     * @param pageToInsert - Page to insert into memory
+     * @return - Integer index to add page into memory
+     */
     @Override
     public int getReplacementIndex(Page pageToInsert)
     {
@@ -78,6 +94,11 @@ public class ClockPolicy implements IPageReplacementAlgorithm
         return foundIndex;
     }
 
+    /**
+     * private void moveClockIndex()
+     * Moves the clock index by 1.
+     * If the clock has reached the end of the frames, it will restart at position 0.
+     */
     private void moveClockIndex()
     {
         if(currentClockIndex == memory.getMaxFrames()-1)
@@ -86,6 +107,10 @@ public class ClockPolicy implements IPageReplacementAlgorithm
             this.currentClockIndex++;
     }
 
+    /**
+     * public String toString()
+     * @return - Clock Name String
+     */
     @Override
     public String toString() {
         return "Clock - Fixed";

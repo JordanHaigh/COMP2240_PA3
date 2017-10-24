@@ -5,13 +5,29 @@ import Model.*;
 
 import java.util.List;
 
+/**
+ * Student Number: 3256730 Jordan Haigh
+ * COMP2240 A3
+ * LRU.java is one of the page replacement algorithms.
+ * Algorithm utilises the smallest page index currently running to replace a page if need be
+ */
 public class LRU implements IPageReplacementAlgorithm {
     Memory memory;
 
+    /**
+     * public ClockPolicy(Memory memory)
+     * @param memory - Memory Object to connect Clock Policy
+     */
     public LRU(Memory memory) {
         this.memory = memory;
     }
 
+    /**
+     * public int getReplacementIndex(Page pageToInsert)
+     * Method either finds the next empty index or replacement of filled index based on LRU algorithm
+     * @param pageToInsert - Page to insert into memory
+     * @return - Index that will determine where the page will be inserted
+     */
     @Override
     public int getReplacementIndex(Page pageToInsert) {
         //Need to find out who the page belongs to
@@ -67,6 +83,10 @@ public class LRU implements IPageReplacementAlgorithm {
 
     }
 
+    /**
+     * public String toString()
+     * @return - LRU name to String
+     */
     @Override
     public String toString() {
         return "LRU - Fixed";

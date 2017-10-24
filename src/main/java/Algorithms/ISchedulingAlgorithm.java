@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Student Number: 3256730 Jordan Haigh
  * COMP2240 A3
- * Algorithms.ISchedulingAlgorithm.java implements methods used by any scheduling algorithm. These methods determine runtime and selection
+ * Algorithms.ISchedulingAlgorithm.java implements methods used by any scheduling algorithm.
+ * These methods determine runtime and selection
  */
 public interface ISchedulingAlgorithm
 {
