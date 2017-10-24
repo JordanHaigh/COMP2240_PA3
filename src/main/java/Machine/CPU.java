@@ -9,7 +9,12 @@ import ObserverPattern.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Student Number: 3256730 Jordan Haigh
+ * COMP2240 A3
+ * CPU.java is used for executing a process for a period of time.
+ * Incorporates a memory module and IO controller for page distribution
+ */
 public class CPU implements IObservable
 {
     private ISchedulingAlgorithm schedulingAlgorithm = new RoundRobin();
@@ -24,6 +29,12 @@ public class CPU implements IObservable
     private Memory memory;
     private IOController ioController;
 
+    /**
+     * public CPU(List<SchedulingProcess> processList, Memory memory)
+     * Overloaded Constructor
+     * @param processList - List of processes
+     * @param memory - Memory module
+     */
     public CPU(List<SchedulingProcess> processList, Memory memory)
     {
         this.processList = processList;
@@ -39,6 +50,10 @@ public class CPU implements IObservable
 
     }
 
+    /**
+     * public int get
+     * @return
+     */
     public int getCurrentTime() {
         return currentTime;
     }
@@ -103,6 +118,10 @@ public class CPU implements IObservable
         notifySubscribers(message);
     }
 
+    /**
+     * public void cycle()
+     * Determines the next process to run on the CPU. Starts running process based on scheduling algorithm
+     */
     public void cycle()
     {
         checkAllProcessesBlocked();
@@ -128,6 +147,12 @@ public class CPU implements IObservable
         }
     }
 
+    /**
+     * private void issuePageFault(Page page)
+     * Blocks the process that the page belongs to and creates a new page fault. Picked up by IO controller
+     * and added to IO Request List
+     * @param page - Page to fault
+     */
     private void issuePageFault(Page page)
     {
         SchedulingProcess parentProcess = page.getParentProcess();
@@ -139,6 +164,11 @@ public class CPU implements IObservable
         notifySubscribers(pageFaultMessage);
     }
 
+    /**
+     * private void checkAllProcessesBlocked
+     * Checks if all processes are in the blocked state.
+     * If all in the blocked state, it will find the next time to update to
+     */
     private void checkAllProcessesBlocked()
     {
         boolean allProcessesBlocked = true;
@@ -161,21 +191,45 @@ public class CPU implements IObservable
         }
     }
 
+    /**
+     * private int getNextTimeReadyFromIOController()
+     * @return - Next time value when page is loaded in to memory
+     */
     private int getNextTimeReadyFromIOController()
     {
         return ioController.getNextIORequest().getPageReadyTime();
     }
 
+
+    /**
+     * public void addSubscriber(ISubscriber subscriber)
+     * Adds a new subscriber to the subscribers list.
+     * Utilised for the observer pattern
+     * @param subscriber - New subscriber
+     */
     @Override
     public void addSubscriber(ISubscriber subscriber) {
         subscriberList.add(subscriber);
     }
 
+
+    /**
+     * public void removeSubScriber(ISubscriber subscriber)
+     * Removes a subscriber from the subscribers list
+     * @param subscriber - Existing subscriber in the the list
+     */
     @Override
     public void removeSubscriber(ISubscriber subscriber) {
         subscriberList.remove(subscriber);
     }
 
+
+    /**
+     * public void notifySubscribers(ObservableMessage message)
+     * Broadcast a message from the CPU class to all subscribers of this class.
+     * Utilised for the observer pattern
+     * @param message - Observable Message to be sent to all subscribers
+     */
     @Override
     public void notifySubscribers(ObservableMessage message) {
         for(ISubscriber subscriber: subscriberList)

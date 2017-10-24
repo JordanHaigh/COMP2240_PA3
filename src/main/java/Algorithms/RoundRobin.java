@@ -6,7 +6,7 @@ import Model.SchedulingProcess;
 import java.util.List;
 /**
  * Student Number: 3256730 Jordan Haigh
- * COMP2240 A1
+ * COMP2240 A3
  * RoundRobin.java is one of the scheduling algorithms used for the Machine.CPU
  *  Each process receives a time quantum of 3 units
  */
