@@ -18,7 +18,7 @@ public class ClockPolicyTests
 
 
         List<Page> pageList = new ArrayList<Page>();
-        int arr[] = {2,3,2,1,5,2,4,5,3,2,5,2};
+        int arr[] = {1,2,3,4,5,6,7,8,9,10,9,8,7,6,5,11,12,1,2,3,4,5}; //{2,3,2,1,5,2,4,5,3,2,5,2};
         for(int i = 0; i < arr.length;i++)
         {
             Page page = factory.getPage(1,arr[i]);
@@ -32,7 +32,7 @@ public class ClockPolicyTests
         for(Page page: pageList)
             page.linkProcessToPage(schedulingProcess);
 
-        Memory memory = new Memory(1,3);
+        Memory memory = new Memory(1,10);
         IPageReplacementAlgorithm clock = new ClockPolicy(memory);
         memory.setPageReplacementAlgorithm(clock);
 
@@ -47,9 +47,9 @@ public class ClockPolicyTests
             }
         }
 
-        Assert.assertEquals(3, memory.getFrames()[0].getPageNumber());
-        Assert.assertEquals(2, memory.getFrames()[1].getPageNumber());
-        Assert.assertEquals(5, memory.getFrames()[2].getPageNumber());
+        Assert.assertEquals(11, memory.getFrames()[0].getPageNumber());
+        Assert.assertEquals(12, memory.getFrames()[1].getPageNumber());
+        Assert.assertEquals(1, memory.getFrames()[2].getPageNumber());
 
 
 

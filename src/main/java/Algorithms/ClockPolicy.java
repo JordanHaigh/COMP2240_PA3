@@ -26,6 +26,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
 
     private int currentClockIndex;
     private SchedulingProcess currentProcess;
+    private List<Frame> loadedProcessPages;
 
     /**
      * public int getReplacementIndex(Page pageToInsert)
@@ -41,8 +42,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
 
         currentProcess = parentProcess;
         currentClockIndex = parentProcess.getClockIndex();
-        List<Frame> loadedProcessPages = memory.findAllPagesInMemory(parentProcess);
-
+        loadedProcessPages = memory.findAllPagesInMemory(parentProcess);
 
 
         ////////////////SCENARIO 1 - PAGE ALREADY RUNNING////////////////////
@@ -78,26 +78,21 @@ public class ClockPolicy implements IPageReplacementAlgorithm
         while(foundIndex == -1)
         {
             for(int i = currentClockIndex; i < loadedProcessPages.size(); i++)
-            //for(int i = currentClockIndex; i < memory.getCountOfAllPagesRunning(); i++)
             {
-                // Starting at the currentClockIndex, check if the page's use bit is set to 0
-                if(frames[i].getParentProcess() == parentProcess)
+                if(loadedProcessPages.get(i).getPage().useBitIsTrue())
                 {
-                    if(frames[i].useBitIsTrue())
-                    {
-                        // if it is 1, we set it to 0 and move the clock head forward
-                        frames[i].setUseBit(false);
-                        //moveClockIndex();
-                    }
-                    else
-                    {
-                        // if it is 0, we replace it at this index (and move clock head movement after)
-                        foundIndex = i;
-                        moveClockIndex();
-                        break;
-                    }
+                    loadedProcessPages.get(i).getPage().setUseBit(false);
+                    //moveClockIndex();
+                }
+                else
+                {
+                    // if it is 0, we replace it at this index (and move clock head movement after)
+                    foundIndex = loadedProcessPages.get(i).getIndex();
+                    moveClockIndex();
+                    break;
                 }
             }
+
         }
 
         return foundIndex;
@@ -110,7 +105,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
      */
     private void moveClockIndex()
     {
-        if(currentClockIndex == memory.getMaxFrames()-1)
+        if(currentClockIndex == memory.getFixedAllocationNumber()-1)
         {
             this.currentClockIndex = 0;
             currentProcess.resetClockIndex();
