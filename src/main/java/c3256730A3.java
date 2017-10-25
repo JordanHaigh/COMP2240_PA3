@@ -94,7 +94,11 @@ public class c3256730A3 implements ISubscriber
         StringBuilder sb = new StringBuilder();
 
         sb.append(pageReplacementAlgorithm.toString())
-        .append("\nPID \t Turnaround Time \t\t # Faults \t Fault Times  ");
+                .append("\n")
+                .append(String.format("%-10s", "PID"))
+                .append(String.format("%-20s", "Turnaround Time"))
+                .append(String.format("%-10s", "# Faults"))
+                .append(String.format("%-10s", "Fault Times"));
 
         List<SchedulingProcess> completedProcessList = cpu.getCompletedProcessList();
 
@@ -106,13 +110,10 @@ public class c3256730A3 implements ISubscriber
         for(SchedulingProcess process: completedProcessList)
         {
             sb.append("\n")
-                    .append(process.getId())
-                    .append(" \t\t ")
-                    .append(process.getTurnaroundTime())
-                    .append(" \t\t\t\t\t ")
-                    .append(process.getNumberFaultTimes())
-                    .append(" \t\t\t ")
-                    .append(process.getFaultTimesToString());
+                    .append(String.format("%-10d", process.getId()))
+                    .append(String.format("%-20d", process.getTurnaroundTime()))
+                    .append(String.format("%-10d", process.getNumberFaultTimes()))
+                    .append(String.format("%-10s", process.getFaultTimesToString()));
         }
 
         System.out.println(sb.toString());
