@@ -82,7 +82,7 @@ public class ClockPolicy implements IPageReplacementAlgorithm
                 if(loadedProcessPages.get(i).getPage().useBitIsTrue())
                 {
                     loadedProcessPages.get(i).getPage().setUseBit(false);
-                    //moveClockIndex();
+                    moveClockIndex();
                 }
                 else
                 {
