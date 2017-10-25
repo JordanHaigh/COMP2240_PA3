@@ -23,6 +23,9 @@ public class CPU implements IObservable
     private List<ISubscriber> subscriberList = new ArrayList<>();
 
     private List<SchedulingProcess> processList = new ArrayList<>();
+    
+    
+    
     private List<SchedulingProcess> completedProcessList = new ArrayList<>();
     private SchedulingProcess currentProcess;
 
