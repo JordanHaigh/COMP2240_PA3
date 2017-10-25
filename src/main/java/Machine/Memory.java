@@ -3,6 +3,7 @@ package Machine;
 import Algorithms.IPageReplacementAlgorithm;
 import Model.*;
 import ObserverPattern.*;
+import com.sun.org.apache.bcel.internal.generic.ISUB;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,13 +15,14 @@ import java.util.List;
  * Memory.java is used to hold a certain number of frames that store Pages from the processes
  * Each process has a certain fixed allocation number for the number of frames
  */
-public class Memory implements ISubscriber
+public class Memory implements ISubscriber, IObservable
 {
     private int maxFrames;
     private int fixedAllocationNumber;
     private IPageReplacementAlgorithm pageReplacementAlgorithm;
     private int size;
     private Page[] frames;
+    private List<ISubscriber> subscribers = new ArrayList<>();
 
 
     /**
@@ -234,8 +236,28 @@ public class Memory implements ISubscriber
             int currentTime = ((ObservablePageReadyMessage) message).getCurrentTime();
 
             addToMemory(page, currentTime);
+
+            SchedulingProcess process = page.getParentProcess();
+            ObservableRemoveProcessReaddMessage processMessage = new ObservableRemoveProcessReaddMessage(process);
+            notifySubscribers(processMessage);
             //System.out.println("Time  " + currentTime + ": " + page.getParentProcess().toString() + ": PAGE ("+page.getPageNumber()+")LOADED IN MEMORY");
 
         }
+    }
+
+    @Override
+    public void addSubscriber(ISubscriber subscriber) {
+        subscribers.add(subscriber);
+    }
+
+    @Override
+    public void removeSubscriber(ISubscriber subscriber) {
+        subscribers.remove(subscriber);
+    }
+
+    @Override
+    public void notifySubscribers(ObservableMessage message) {
+        for(ISubscriber subscriber: subscribers)
+            subscriber.handleMessage(message);
     }
 }

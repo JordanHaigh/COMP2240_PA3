@@ -15,8 +15,7 @@ import java.util.List;
  * CPU.java is used for executing a process for a period of time.
  * Incorporates a memory module and IO controller for page distribution
  */
-public class CPU implements IObservable
-{
+public class CPU implements IObservable, ISubscriber {
     private ISchedulingAlgorithm schedulingAlgorithm = new RoundRobin();
     private int currentTime;
 
@@ -50,6 +49,7 @@ public class CPU implements IObservable
 
 
         ioController.addSubscriber(memory);
+        memory.addSubscriber(this);
 
     }
 
@@ -240,5 +240,15 @@ public class CPU implements IObservable
     }
 
 
+    @Override
+    public void handleMessage(ObservableMessage message) {
+        if(message instanceof ObservableRemoveProcessReaddMessage)
+        {
+            SchedulingProcess process = ((ObservableRemoveProcessReaddMessage) message).getProcess();
+
+            processList.remove(process);
+            processList.add(process);
+        }
+    }
 }
 
